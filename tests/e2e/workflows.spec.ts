@@ -101,3 +101,71 @@ test('preferências persistem e layout móvel não causa rolagem da página', as
     true,
   );
 });
+
+test('agrupa trocas rápidas, mantém totais e permite editar só um detalhe', async ({ page }) => {
+  await page.evaluate(async () => {
+    const source = '/src/lib/demo.ts';
+    const { createDemo } = await import(source);
+    const snapshot = createDemo();
+    let start = new Date().setHours(8, 0, 0, 0);
+    snapshot.events = [
+      ['eberick.exe', 'TFLM — Eberick', 30],
+      ['chrome.exe', 'Documentação rápida', 2],
+      ['eberick.exe', 'TFLM — Eberick', 20],
+      ['chrome.exe', 'Leitura longa', 5],
+    ].map(([app, title, minutes], i) => {
+      const end = start + Number(minutes) * 60_000;
+      const event = {
+        id: `quick-${i}`,
+        start,
+        end,
+        app: String(app),
+        title: String(title),
+        domain: null,
+        projectId: null,
+        kind: 'active' as const,
+      };
+      start = end;
+      return event;
+    });
+    localStorage.setItem('tempo-demo-v1', JSON.stringify(snapshot));
+  });
+  await page.reload();
+  await expect(page.locator('.table-footer b')).toHaveText('57 min');
+  await page.getByRole('button', { name: 'Software', exact: true }).click();
+  const chrome = page.locator('.activity-row').filter({ hasText: 'Google Chrome' }).first();
+  await expect(chrome.locator('.row-time')).toHaveText('7 min');
+  await page.getByRole('button', { name: 'Linha do tempo', exact: true }).click();
+  await expect(page.locator('.timeline-item')).toHaveCount(2);
+  const block = page.locator('.timeline-summary');
+  await expect(block).toContainText('52 min');
+  await expect(block).toContainText('Vários projetos');
+  await block.click();
+  await expect(page.locator('.timeline-details .timeline-item')).toHaveCount(3);
+  const detail = page
+    .locator('.timeline-details .timeline-item')
+    .filter({ hasText: 'Documentação rápida' });
+  await expect(detail).toContainText('2 min');
+  await detail.click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Projeto', { exact: true }).selectOption('aurora');
+  await dialog.getByRole('button', { name: 'Aplicar aos intervalos' }).click();
+  await page.getByLabel('Mostrar todos os intervalos').check();
+  await expect(page.locator('.timeline-item')).toHaveCount(4);
+  await expect(
+    page.locator('.timeline-item').filter({ hasText: 'Documentação rápida' }),
+  ).toContainText('Residencial Aurora');
+  await expect(page.locator('.timeline-item').filter({ hasText: 'TFLM — Eberick' })).toHaveCount(2);
+  await page.getByLabel('Mostrar todos os intervalos').uncheck();
+  await expect(page.locator('.timeline-item')).toHaveCount(5); // The previously opened block retains its three details.
+  await page.getByRole('button', { name: 'Visão geral', exact: true }).click();
+  await expect(page.locator('.table-footer b')).toHaveText('57 min');
+  await page.getByRole('button', { name: 'Projeto', exact: true }).click();
+  await expect(
+    page
+      .locator('.activity-row')
+      .filter({ hasText: 'Residencial Aurora' })
+      .first()
+      .locator('.row-time'),
+  ).toHaveText('2 min');
+});

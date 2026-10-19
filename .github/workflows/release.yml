@@ -1,8 +1,8 @@
-name: Publish Tempo 0.1.0 preview
+name: Publish Tempo preview
 
 on:
   push:
-    tags: ['v0.1.0']
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:
@@ -15,19 +15,27 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve and validate release version
+        shell: bash
+        run: |
+          version=$(node -p "require('./package.json').version")
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          [[ "$GITHUB_REF_TYPE" != tag || "$GITHUB_REF_NAME" == "v$version" ]]
+          printf 'VERSION=%s\n' "$version" >> "$GITHUB_ENV"
       - name: Verify distribution checksums
-        working-directory: downloads/v0.1.0
-        run: sha256sum --check SHA256SUMS.txt
+        run: |
+          cd "downloads/v$VERSION"
+          sha256sum --check SHA256SUMS.txt
       - name: Publish prerelease and installer
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          gh release create v0.1.0 \
+          gh release create "v$VERSION" \
             --verify-tag \
             --prerelease \
-            --title "Tempo 0.1.0 — versão de teste para Windows" \
-            --notes-file docs/RELEASE-NOTES-v0.1.0.md \
-            downloads/v0.1.0/Tempo-0.1.0-windows-x64-setup.exe \
-            downloads/v0.1.0/Tempo-0.1.0-windows-x64-portable.zip \
-            downloads/v0.1.0/SHA256SUMS.txt
+            --title "Tempo $VERSION — versão de teste para Windows" \
+            --notes-file "docs/RELEASE-NOTES-v$VERSION.md" \
+            "downloads/v$VERSION/Tempo-$VERSION-windows-x64-setup.exe" \
+            "downloads/v$VERSION/Tempo-$VERSION-windows-x64-portable.zip" \
+            "downloads/v$VERSION/SHA256SUMS.txt"

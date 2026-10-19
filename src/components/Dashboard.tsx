@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { AppIcon, Empty } from './ui';
 import { dayStart, duration, formatClock, formatDuration, groupEvents } from '../lib/engine';
+import { buildTimeline } from '../lib/timeline';
 import type { ClassifiedEvent, Configuration, DateRange, GroupMode, GroupRow } from '../lib/types';
 
 interface Props {
@@ -454,31 +455,85 @@ export function Timeline({
   events: ClassifiedEvent[];
   onSelect: (events: ClassifiedEvent[]) => void;
 }) {
-  const sorted = [...events].sort((a, b) => b.start - a.start);
+  const [showAll, setShowAll] = useState(false);
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
+  const blocks = buildTimeline(events, !showAll);
+  const renderInterval = (event: ClassifiedEvent) => {
+    const rest = event.kind !== 'active';
+    return (
+      <button
+        className={`timeline-item ${rest ? 'timeline-rest' : ''}`}
+        onClick={() => !rest && onSelect([event])}
+        disabled={rest}
+      >
+        <span className="timeline-hours">
+          {formatClock(event.start)}
+          <small>{formatClock(event.end)}</small>
+        </span>
+        <span className="timeline-connector">
+          <i />
+        </span>
+        {rest ? (
+          <span className="rest-icon">
+            <Coffee size={18} />
+          </span>
+        ) : (
+          <AppIcon app={event.app} />
+        )}
+        <span className="timeline-content">
+          <strong>
+            {rest
+              ? event.kind === 'pause'
+                ? 'Pausa'
+                : event.kind === 'idle'
+                  ? 'Ausente ou tela bloqueada'
+                  : 'Intervalo sem coleta'
+              : event.activityName}
+          </strong>
+          <small>{rest ? 'Fora do tempo ativo' : event.title || event.softwareName}</small>
+        </span>
+        {!rest && <span className="project-pill">{event.projectName}</span>}
+        <strong className="timeline-duration">{formatDuration(event.end - event.start)}</strong>
+        {!rest && <ChevronRight size={16} />}
+      </button>
+    );
+  };
   let previousDay = 0;
   return (
     <section className="card timeline-card">
       <div className="card-heading">
         <div>
           <h2>Sua linha do tempo</h2>
-          <p>Selecione um intervalo para atribuir projeto ou atividade.</p>
+          <p>
+            Trocas de menos de 5 minutos ficam nos detalhes. Categorias e projetos mantêm o tempo
+            exato.
+          </p>
         </div>
         <Clock3 size={18} className="muted" />
       </div>
-      {!sorted.length ? (
+      <div className="timeline-options">
+        <label>
+          <input type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.target.checked)} />
+          Mostrar todos os intervalos
+        </label>
+        <span>Abra um bloco para consultar e editar cada intervalo.</span>
+      </div>
+      {!blocks.length ? (
         <Empty
           title="Nenhum intervalo neste período"
           description="A coleta registra o uso dos softwares automaticamente no aplicativo Windows."
         />
       ) : (
         <div className="timeline-list">
-          {sorted.map((event) => {
-            const day = dayStart(new Date(event.start));
+          {blocks.map((block) => {
+            const day = dayStart(new Date(block.start));
             const showDay = day !== previousDay;
             previousDay = day;
-            const rest = event.kind !== 'active';
+            const grouped = block.events.length > 1;
+            const open = expanded.has(block.id);
+            const projectNames = new Set(block.events.map((event) => event.projectId));
             return (
-              <div key={event.id}>
+              <div key={block.id} className={grouped ? 'timeline-block' : undefined}>
                 {showDay && (
                   <div className="timeline-date">
                     {new Date(day).toLocaleDateString('pt-BR', {
@@ -488,45 +543,68 @@ export function Timeline({
                     })}
                   </div>
                 )}
-                <button
-                  className={`timeline-item ${rest ? 'timeline-rest' : ''}`}
-                  onClick={() => !rest && onSelect([event])}
-                  disabled={rest}
-                >
-                  <span className="timeline-hours">
-                    {formatClock(event.start)}
-                    <small>{formatClock(event.end)}</small>
-                  </span>
-                  <span className="timeline-connector">
-                    <i />
-                  </span>
-                  {rest ? (
-                    <span className="rest-icon">
-                      <Coffee size={18} />
-                    </span>
-                  ) : (
-                    <AppIcon app={event.app} />
-                  )}
-                  <span className="timeline-content">
-                    <strong>
-                      {rest
-                        ? event.kind === 'pause'
-                          ? 'Pausa'
-                          : event.kind === 'idle'
-                            ? 'Ausente ou tela bloqueada'
-                            : 'Intervalo sem coleta'
-                        : event.activityName}
-                    </strong>
-                    <small>
-                      {rest ? 'Fora do tempo ativo' : event.title || event.softwareName}
-                    </small>
-                  </span>
-                  {!rest && <span className="project-pill">{event.projectName}</span>}
-                  <strong className="timeline-duration">
-                    {formatDuration(event.end - event.start)}
-                  </strong>
-                  {!rest && <ChevronRight size={16} />}
-                </button>
+                {!grouped ? (
+                  renderInterval(block.events[0])
+                ) : (
+                  <>
+                    <button
+                      className="timeline-item timeline-summary"
+                      aria-expanded={open}
+                      onClick={() =>
+                        setExpanded((current) => {
+                          const next = new Set(current);
+                          if (next.has(block.id)) next.delete(block.id);
+                          else next.add(block.id);
+                          return next;
+                        })
+                      }
+                    >
+                      <span className="timeline-hours">
+                        {formatClock(block.start)}
+                        <small>{formatClock(block.end)}</small>
+                      </span>
+                      <span className="timeline-connector">
+                        <i />
+                      </span>
+                      {block.anchor ? (
+                        <AppIcon app={block.anchor.app} />
+                      ) : (
+                        <span className="rest-icon">
+                          <Layers3 size={18} />
+                        </span>
+                      )}
+                      <span className="timeline-content">
+                        <strong>
+                          {block.anchor
+                            ? `${block.anchor.activityName} e mudanças rápidas`
+                            : 'Mudanças rápidas'}
+                        </strong>
+                        <small>
+                          {block.events.length} intervalos · total do bloco ·{' '}
+                          {open ? 'fechar detalhes' : 'abrir detalhes'}
+                        </small>
+                      </span>
+                      <span className="project-pill">
+                        {projectNames.size > 1 ? 'Vários projetos' : block.events[0].projectName}
+                      </span>
+                      <strong className="timeline-duration">
+                        {formatDuration(duration(block.events))}
+                      </strong>
+                      {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                    </button>
+                    {open && (
+                      <div className="timeline-details">
+                        <p>
+                          Cada intervalo mantém sua própria categoria e projeto. Selecione um para
+                          editar.
+                        </p>
+                        {[...block.events].reverse().map((event) => (
+                          <div key={`${event.id}:${event.start}`}>{renderInterval(event)}</div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
             );
           })}

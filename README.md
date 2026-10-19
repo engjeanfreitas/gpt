@@ -2,9 +2,9 @@
 
 Rastreador pessoal de tempo para Windows. Organize o histórico em árvore e explore os mesmos intervalos por atividade, software ou projeto.
 
-**Download da versão de teste:** [Instalador Windows x64](https://github.com/engjeanfreitas/gpt/raw/refs/heads/main/downloads/v0.1.0/Tempo-0.1.0-windows-x64-setup.exe) · [ZIP portátil](https://github.com/engjeanfreitas/gpt/raw/refs/heads/main/downloads/v0.1.0/Tempo-0.1.0-windows-x64-portable.zip) · [Página da versão](https://github.com/engjeanfreitas/gpt/releases/tag/v0.1.0).
+**Download da versão de teste:** [Instalador Windows x64](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.1/Tempo-0.1.1-windows-x64-setup.exe) · [ZIP portátil](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.1/Tempo-0.1.1-windows-x64-portable.zip) · [Página da versão](https://github.com/engjeanfreitas/gpt/releases/tag/v0.1.1).
 
-Esta distribuição inicial não tem assinatura de código e ainda requer os testes de captura e áudio em um Windows real. As [notas da versão](docs/RELEASE-NOTES-v0.1.0.md) descrevem recursos e limites.
+Esta distribuição não tem assinatura de código e ainda requer os testes de captura e áudio em um Windows real. As [notas da versão](docs/RELEASE-NOTES-v0.1.1.md) descrevem recursos e limites.
 
 Esta primeira versão inclui dashboard, timeline, projetos com estimativa de horas, regras reprocessáveis, atribuições manuais, nomes amigáveis, categorias hierárquicas, exportação CSV e pausa configurável com contador, notificação e alarme.
 
@@ -38,9 +38,17 @@ npm run desktop:build
 
 O instalador NSIS será gerado em `src-tauri/target/release/bundle/nsis/`. A primeira distribuição não possui certificado de assinatura de código. O Windows pode solicitar confirmação ao executar um instalador sem reputação estabelecida.
 
-O workflow `.github/workflows/checks.yml` prepara testes e build no Windows. Adicionar esse arquivo não executa o workflow; uma execução real no GitHub ainda precisa acontecer.
+O workflow `.github/workflows/checks.yml` executa testes e build no Windows a cada push em `main`; os resultados ficam na aba Actions do repositório.
 
 ## Usar projetos e regras
+
+### Linha do tempo sem excesso de itens
+
+Trocas de tela com menos de cinco minutos ficam nos detalhes de um bloco. Uma mudança de cinco minutos ou mais inicia outro bloco; retornar à mesma janela após consultas curtas mantém o bloco anterior. Pausas, ausência, lacunas entre registros e dias diferentes delimitam os blocos. Sequências só com trocas curtas aparecem como **Mudanças rápidas**.
+
+Por exemplo, Eberick por 30 min → navegador por 2 min → Eberick por 20 min forma um bloco de 52 min, mas o dashboard continua atribuindo 50 min ao Eberick e 2 min ao navegador, em suas próprias categorias e projetos. O agrupamento é apenas visual: não modifica a coleta, o banco ou os totais. Abra o bloco para editar um intervalo específico ou marque **Mostrar todos os intervalos**. A atribuição atua no registro original completo, inclusive quando a visualização o recorta no limite do dia ou do período selecionado.
+
+### Atribuir um projeto
 
 1. Crie o projeto **Estrutural TFLM** e informe `eberick.exe` na lista de softwares da sessão.
 2. Selecione o projeto atual na barra lateral. Enquanto o Eberick estiver em primeiro plano, os intervalos elegíveis serão vinculados ao TFLM.
@@ -72,6 +80,12 @@ Não há conta, backend remoto, telemetria, screenshots ou registro do conteúdo
 Observações iguais são agrupadas, com checkpoint a cada cinco segundos e gravação ao mudar de contexto ou sair. Um encerramento abrupto pode perder os últimos cinco segundos. A gravação usa WAL, parâmetros SQL e transações nas operações de exclusão. A retenção é aplicada na abertura, na mudança de preferências e periodicamente.
 
 O botão de exclusão apaga o período selecionado, independentemente dos filtros de projeto/categoria. Backups e arquivos exportados anteriormente não são apagados automaticamente. Para restaurar um backup SQLite, encerre o Tempo e substitua o banco com cuidado; faça antes uma cópia do banco atual e mantenha os arquivos WAL/SHM somente da mesma instância encerrada. Não há assistente de restauração nesta versão.
+
+## Atualizar o aplicativo
+
+Encerre o Tempo pela bandeja e execute o instalador da nova versão, com o mesmo usuário e local de instalação. Não é preciso desinstalar manualmente; histórico e configurações ficam no diretório de dados separado. A versão 0.1.1 mantém o mesmo formato do banco. Se optar por desinstalar, não marque a exclusão dos dados do aplicativo. A distribuição portátil é atualizada substituindo os arquivos extraídos com o programa encerrado.
+
+Regras, categorias, nomes, projetos e preferências têm efeito imediato, sem reinstalação. Mudanças no código exigem uma nova versão instalada; o Tempo ainda não possui atualizador automático.
 
 ## Validação
 

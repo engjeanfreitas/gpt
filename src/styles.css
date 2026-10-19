@@ -1141,6 +1141,36 @@ h1 {
 .timeline-list {
   padding: 8px 23px 24px;
 }
+.timeline-options {
+  padding: 0 23px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 24px;
+  color: #75856b;
+  font-size: 11px;
+  border-bottom: 1px solid #eff1e9;
+}
+.timeline-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.timeline-options input {
+  accent-color: #758b60;
+}
+.timeline-details {
+  padding: 0 12px 12px;
+  border-radius: 8px;
+  background: #f7f9f2;
+}
+.timeline-details > p {
+  padding: 14px 0 4px;
+  margin: 0;
+  font-size: 11px;
+  color: #75856b;
+}
 .timeline-date {
   font-size: 10px;
   color: #8a987c;
