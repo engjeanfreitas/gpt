@@ -1,0 +1,134 @@
+{
+  "categories": [
+    {
+      "id": "work",
+      "name": "Trabalho",
+      "color": "#7e9274",
+      "parentId": null
+    },
+    {
+      "id": "engineering",
+      "name": "Engenharia",
+      "color": "#c87957",
+      "parentId": "work"
+    },
+    {
+      "id": "study",
+      "name": "Estudo",
+      "color": "#778db5",
+      "parentId": null
+    },
+    {
+      "id": "personal",
+      "name": "Pessoal",
+      "color": "#b18eb8",
+      "parentId": null
+    }
+  ],
+  "activities": [
+    {
+      "id": "structural",
+      "name": "Modelagem estrutural",
+      "categoryId": "engineering"
+    },
+    {
+      "id": "budget",
+      "name": "Orçamentos e planejamento",
+      "categoryId": "work"
+    },
+    {
+      "id": "research",
+      "name": "Pesquisa e referências",
+      "categoryId": "study"
+    },
+    {
+      "id": "communication",
+      "name": "Comunicação",
+      "categoryId": "work"
+    },
+    {
+      "id": "leisure",
+      "name": "Navegação pessoal",
+      "categoryId": "personal"
+    }
+  ],
+  "projects": [],
+  "softwares": [
+    {
+      "executable": "eberick.exe",
+      "name": "Eberick",
+      "categoryId": "engineering"
+    },
+    {
+      "executable": "excel.exe",
+      "name": "Excel",
+      "categoryId": "work"
+    },
+    {
+      "executable": "chrome.exe",
+      "name": "Google Chrome",
+      "categoryId": null
+    },
+    {
+      "executable": "msedge.exe",
+      "name": "Microsoft Edge",
+      "categoryId": null
+    },
+    {
+      "executable": "code.exe",
+      "name": "Visual Studio Code",
+      "categoryId": "work"
+    },
+    {
+      "executable": "outlook.exe",
+      "name": "Outlook",
+      "categoryId": "work"
+    }
+  ],
+  "rules": [
+    {
+      "id": "rule-eberick",
+      "name": "Modelagem no Eberick",
+      "enabled": true,
+      "priority": 20,
+      "app": "eberick.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "structural",
+      "projectId": null
+    },
+    {
+      "id": "rule-excel",
+      "name": "Planejamento no Excel",
+      "enabled": true,
+      "priority": 10,
+      "app": "excel.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "budget",
+      "projectId": null
+    },
+    {
+      "id": "rule-email",
+      "name": "E-mails no Outlook",
+      "enabled": true,
+      "priority": 10,
+      "app": "outlook.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "communication",
+      "projectId": null
+    }
+  ],
+  "assignments": {},
+  "settings": {
+    "idleSeconds": 180,
+    "pausePresets": [5, 10, 15, 30],
+    "autoResume": false,
+    "alarmSound": "soft",
+    "alarmVolume": 65,
+    "privacyApps": [],
+    "privacyTitles": [],
+    "retentionDays": 365
+  }
+}

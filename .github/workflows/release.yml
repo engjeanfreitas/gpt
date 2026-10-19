@@ -1,0 +1,33 @@
+name: Publish Tempo 0.1.0 preview
+
+on:
+  push:
+    tags: ['v0.1.0']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify distribution checksums
+        working-directory: downloads/v0.1.0
+        run: sha256sum --check SHA256SUMS.txt
+      - name: Publish prerelease and installer
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release create v0.1.0 \
+            --verify-tag \
+            --prerelease \
+            --title "Tempo 0.1.0 — versão de teste para Windows" \
+            --notes-file docs/RELEASE-NOTES-v0.1.0.md \
+            downloads/v0.1.0/Tempo-0.1.0-windows-x64-setup.exe \
+            downloads/v0.1.0/Tempo-0.1.0-windows-x64-portable.zip \
+            downloads/v0.1.0/SHA256SUMS.txt

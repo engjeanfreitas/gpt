@@ -1,0 +1,537 @@
+import { useState } from 'react';
+import {
+  ArrowDownRight,
+  ArrowRight,
+  ChevronDown,
+  ChevronRight,
+  Clock3,
+  Coffee,
+  FolderKanban,
+  Layers3,
+  Monitor,
+  MoreHorizontal,
+  Timer,
+  HelpCircle,
+} from 'lucide-react';
+import { AppIcon, Empty } from './ui';
+import { dayStart, duration, formatClock, formatDuration, groupEvents } from '../lib/engine';
+import type { ClassifiedEvent, Configuration, DateRange, GroupMode, GroupRow } from '../lib/types';
+
+interface Props {
+  events: ClassifiedEvent[];
+  config: Configuration;
+  range: DateRange;
+  mode: GroupMode;
+  onMode: (mode: GroupMode) => void;
+  onSelect: (events: ClassifiedEvent[]) => void;
+  onProject: (id: string) => void;
+  onNewProject: () => void;
+}
+export function ActivityChart({ events, range }: { events: ClassifiedEvent[]; range: DateRange }) {
+  const daily = range.end - range.start > 26 * 3600_000;
+  const bins: { start: number; end: number; label: string; active: number; rest: number }[] = [];
+  if (daily) {
+    let date = new Date(range.start);
+    while (date.getTime() < range.end && bins.length < 366) {
+      const start = date.getTime();
+      const next = new Date(date);
+      next.setDate(next.getDate() + 1);
+      bins.push({
+        start,
+        end: next.getTime(),
+        label: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+        active: 0,
+        rest: 0,
+      });
+      date = next;
+    }
+  } else {
+    for (let start = range.start; start < range.end; start += 3600_000) {
+      const date = new Date(start);
+      bins.push({
+        start,
+        end: Math.min(start + 3600_000, range.end),
+        label: `${date.getHours()}h`,
+        active: 0,
+        rest: 0,
+      });
+    }
+  }
+  for (const bin of bins)
+    for (const event of events) {
+      const ms = Math.max(0, Math.min(bin.end, event.end) - Math.max(bin.start, event.start));
+      if (event.kind === 'active') bin.active += ms;
+      else if (event.kind !== 'unknown') bin.rest += ms;
+    }
+  const max = Math.max(daily ? 3600_000 : 1800_000, ...bins.map((b) => b.active + b.rest));
+  const width = 760;
+  const height = 204;
+  const graphHeight = 155;
+  const step = 700 / Math.max(1, bins.length);
+  const barWidth = Math.max(2, Math.min(32, step * 0.55));
+  return (
+    <div className="chart-container">
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label="Distribuição do tempo ativo, pausas e ausência no período"
+      >
+        {[0, 1, 2, 3].map((i) => (
+          <g key={i}>
+            <line
+              x1="43"
+              x2="752"
+              y1={12 + (i * graphHeight) / 3}
+              y2={12 + (i * graphHeight) / 3}
+              stroke="#ecece6"
+              strokeDasharray="3 5"
+            />
+            <text x="0" y={16 + (i * graphHeight) / 3} className="chart-label">
+              {formatDuration((max * (3 - i)) / 3, true)}
+            </text>
+          </g>
+        ))}
+        {bins.map((bin, i) => {
+          const x = 46 + i * step + (step - barWidth) / 2;
+          const activeHeight = (bin.active / max) * graphHeight;
+          const restHeight = (bin.rest / max) * graphHeight;
+          const showLabel = bins.length <= 18 || i % Math.ceil(bins.length / 12) === 0;
+          return (
+            <g key={bin.start}>
+              <title>
+                {bin.label}: {formatDuration(bin.active)} ativos, {formatDuration(bin.rest)} em
+                pausa ou ausência
+              </title>
+              <rect
+                x={x}
+                y={12 + graphHeight - activeHeight}
+                width={barWidth}
+                height={activeHeight}
+                rx="4"
+                fill="#7f9477"
+              />
+              <rect
+                x={x}
+                y={12 + graphHeight - activeHeight - restHeight}
+                width={barWidth}
+                height={Math.max(0, restHeight - 2)}
+                rx="3"
+                fill="#e9dcc9"
+              />
+              {showLabel && (
+                <text x={x + barWidth / 2} y="192" textAnchor="middle" className="chart-label">
+                  {bin.label}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+export function Dashboard({
+  events,
+  config,
+  range,
+  mode,
+  onMode,
+  onSelect,
+  onProject,
+  onNewProject,
+}: Props) {
+  const active = events.filter((e) => e.kind === 'active');
+  const total = duration(active);
+  const paused = duration(events.filter((e) => e.kind === 'pause'));
+  const idle = duration(events.filter((e) => e.kind === 'idle'));
+  const uncategorized = duration(active.filter((e) => !e.activityId));
+  const rows = groupEvents(events, config, mode);
+  const softwareRows = groupEvents(events, config, 'software').slice(0, 4);
+  const projectRows = groupEvents(events, config, 'project')
+    .filter((r) => r.id !== 'p:none')
+    .slice(0, 3);
+  return (
+    <>
+      <div className="metrics">
+        <Metric
+          label="Tempo ativo"
+          value={formatDuration(total)}
+          icon={<Clock3 size={18} />}
+          note="Nos softwares em primeiro plano"
+          tone="green"
+        />
+        <Metric
+          label="Em projetos"
+          value={formatDuration(duration(active.filter((e) => !!e.projectId)))}
+          icon={<FolderKanban size={18} />}
+          note={`${new Set(active.map((e) => e.projectId).filter(Boolean)).size} projetos no período`}
+          tone="orange"
+        />
+        <Metric
+          label="Pausas e ausência"
+          value={formatDuration(paused + idle)}
+          icon={<Coffee size={18} />}
+          note={`${formatDuration(paused)} de pausa · ${formatDuration(idle)} ausente`}
+          tone="purple"
+        />
+        <Metric
+          label="Sem classificação"
+          value={formatDuration(uncategorized)}
+          icon={<Layers3 size={18} />}
+          note={
+            total
+              ? `${Math.round((uncategorized / total) * 100)}% do tempo ativo para organizar`
+              : 'Classifique suas primeiras atividades'
+          }
+          tone="neutral"
+        />
+      </div>
+      <div className="dashboard-grid">
+        <section className="card distribution-card">
+          <div className="card-heading">
+            <div>
+              <h2>
+                {range.end - range.start > 26 * 3600_000
+                  ? 'O ritmo do período'
+                  : 'O ritmo do seu dia'}
+              </h2>
+              <p>Um olhar sobre como seu tempo se distribui.</p>
+            </div>
+            <span className="subtle-icon">
+              <Timer size={18} />
+            </span>
+          </div>
+          <ActivityChart events={events} range={range} />
+          <div className="chart-legend">
+            <span>
+              <i style={{ background: '#7f9477' }} />
+              Tempo ativo
+            </span>
+            <span>
+              <i style={{ background: '#e9dcc9' }} />
+              Pausa e ausência
+            </span>
+            <span className="legend-note">
+              <HelpCircle size={12} /> Intervalos sem coleta não entram no total
+            </span>
+          </div>
+        </section>
+        <section className="card software-card">
+          <div className="card-heading">
+            <div>
+              <h2>Seus softwares</h2>
+              <p>As ferramentas do seu trabalho.</p>
+            </div>
+            <Monitor size={18} className="muted" />
+          </div>
+          {softwareRows.length ? (
+            <div className="software-ranking">
+              {softwareRows.map((row) => (
+                <button key={row.id} className="software-rank" onClick={() => onSelect(row.events)}>
+                  <AppIcon app={row.events[0].app} />
+                  <span className="rank-info">
+                    <span className="rank-label">
+                      {row.name}
+                      <strong>{formatDuration(row.duration)}</strong>
+                    </span>
+                    <span className="progress-track">
+                      <span
+                        style={{
+                          width: `${(row.duration / Math.max(total, 1)) * 100}%`,
+                          background: row.color,
+                        }}
+                      />
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="small-empty">Os softwares aparecerão após a primeira coleta.</p>
+          )}
+          <button className="text-link ranking-link" onClick={() => onMode('software')}>
+            Explorar por software <ArrowRight size={14} />
+          </button>
+        </section>
+      </div>
+      <section className="card tree-card">
+        <div className="card-heading tree-heading">
+          <div>
+            <h2>Para onde foi seu tempo?</h2>
+            <p>Explore os detalhes. Cada intervalo conta uma única vez.</p>
+          </div>
+          <div className="segmented" aria-label="Agrupar tempo">
+            {(
+              [
+                ['activity', 'Atividade'],
+                ['software', 'Software'],
+                ['project', 'Projeto'],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                className={mode === value ? 'selected' : ''}
+                onClick={() => onMode(value)}
+                aria-pressed={mode === value}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+        {rows.length ? (
+          <ActivityTree rows={rows} total={total} onSelect={onSelect} mode={mode} />
+        ) : (
+          <Empty
+            title="Seu tempo começa aqui"
+            description="As atividades deste período aparecerão na árvore. Experimente outro período ou ajuste os filtros."
+          />
+        )}
+        {!!rows.length && (
+          <div className="table-footer">
+            <span>
+              <span className="tiny-dot" /> Os totais dos pais incluem seus filhos
+            </span>
+            <strong>
+              Total ativo <b>{formatDuration(total)}</b>
+            </strong>
+          </div>
+        )}
+      </section>
+      <section className="projects-overview">
+        <div className="section-heading">
+          <div>
+            <h2>Projetos em movimento</h2>
+            <p>Veja o que está recebendo sua atenção.</p>
+          </div>
+          <button className="text-link" onClick={onNewProject}>
+            Novo projeto <ArrowRight size={15} />
+          </button>
+        </div>
+        <div className="mini-projects">
+          {projectRows.length ? (
+            projectRows.map((row) => {
+              const p = config.projects.find((p) => `p:${p.id}` === row.id)!;
+              return (
+                <button className="mini-project card" key={row.id} onClick={() => onProject(p.id)}>
+                  <span
+                    className="project-mark"
+                    style={{ color: p.color, background: `${p.color}18` }}
+                  >
+                    <FolderKanban size={19} />
+                  </span>
+                  <span>
+                    <strong>{row.name}</strong>
+                    <small>{p.client || 'Projeto pessoal'}</small>
+                  </span>
+                  <span className="mini-project-time">
+                    {formatDuration(row.duration)}
+                    <ArrowDownRight size={15} />
+                  </span>
+                </button>
+              );
+            })
+          ) : (
+            <div className="card mini-project-empty">
+              Atribua atividades a um projeto para acompanhar seu tempo aqui.
+            </div>
+          )}
+        </div>
+      </section>
+    </>
+  );
+}
+function Metric({
+  label,
+  value,
+  note,
+  icon,
+  tone,
+}: {
+  label: string;
+  value: string;
+  note: string;
+  icon: React.ReactNode;
+  tone: string;
+}) {
+  return (
+    <section className={`card metric metric-${tone}`}>
+      <div className="metric-label">
+        {label}
+        <span>{icon}</span>
+      </div>
+      <div className="metric-value">{value}</div>
+      <p>{note}</p>
+    </section>
+  );
+}
+function ActivityTree({
+  rows,
+  total,
+  onSelect,
+  mode,
+}: {
+  rows: GroupRow[];
+  total: number;
+  onSelect: (events: ClassifiedEvent[]) => void;
+  mode: GroupMode;
+}) {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set(['work', 'work/engineering']));
+  const toggle = (key: string) =>
+    setExpanded((current) => {
+      const next = new Set(current);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  const renderRows = (items: GroupRow[], depth = 0, parent = ''): React.ReactNode =>
+    items.map((row) => {
+      const key = `${parent}${parent ? '/' : ''}${row.id}`;
+      const open = expanded.has(key);
+      const percent = (row.duration / Math.max(total, 1)) * 100;
+      return (
+        <div key={key}>
+          <div className={`activity-row ${depth ? 'child-row' : ''}`}>
+            <div className="activity-name" style={{ paddingLeft: `${depth * 25 + 16}px` }}>
+              {row.children.length ? (
+                <button
+                  className="tree-toggle"
+                  onClick={() => toggle(key)}
+                  aria-label={`${open ? 'Recolher' : 'Expandir'} ${row.name}`}
+                  aria-expanded={open}
+                >
+                  {open ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
+                </button>
+              ) : (
+                <span className="tree-toggle-placeholder" />
+              )}
+              <span className="category-dot" style={{ background: row.color }} />
+              <button className="row-name-button" onClick={() => onSelect(row.events)}>
+                <strong>{row.name}</strong>
+                <small>{row.subtitle}</small>
+              </button>
+            </div>
+            <strong className="row-time">{formatDuration(row.duration)}</strong>
+            <div className="row-bar">
+              <span style={{ width: `${Math.max(1, percent)}%`, background: row.color }} />
+            </div>
+            <span className="row-percentage">{Math.round(percent)}%</span>
+            <button
+              className="icon-button row-edit"
+              onClick={() => onSelect(row.events)}
+              aria-label={`Editar ${row.name}`}
+            >
+              <MoreHorizontal size={18} />
+            </button>
+          </div>
+          {open && renderRows(row.children, depth + 1, key)}
+        </div>
+      );
+    });
+  return (
+    <div className="activity-table">
+      <div className="table-head">
+        <span>
+          {mode === 'activity'
+            ? 'Categoria / atividade'
+            : mode === 'software'
+              ? 'Software / atividade'
+              : 'Projeto / atividade'}
+        </span>
+        <span>Tempo</span>
+        <span>Distribuição</span>
+        <span>%</span>
+        <span />
+      </div>
+      {renderRows(rows)}
+    </div>
+  );
+}
+export function Timeline({
+  events,
+  onSelect,
+}: {
+  events: ClassifiedEvent[];
+  onSelect: (events: ClassifiedEvent[]) => void;
+}) {
+  const sorted = [...events].sort((a, b) => b.start - a.start);
+  let previousDay = 0;
+  return (
+    <section className="card timeline-card">
+      <div className="card-heading">
+        <div>
+          <h2>Sua linha do tempo</h2>
+          <p>Selecione um intervalo para atribuir projeto ou atividade.</p>
+        </div>
+        <Clock3 size={18} className="muted" />
+      </div>
+      {!sorted.length ? (
+        <Empty
+          title="Nenhum intervalo neste período"
+          description="A coleta registra o uso dos softwares automaticamente no aplicativo Windows."
+        />
+      ) : (
+        <div className="timeline-list">
+          {sorted.map((event) => {
+            const day = dayStart(new Date(event.start));
+            const showDay = day !== previousDay;
+            previousDay = day;
+            const rest = event.kind !== 'active';
+            return (
+              <div key={event.id}>
+                {showDay && (
+                  <div className="timeline-date">
+                    {new Date(day).toLocaleDateString('pt-BR', {
+                      weekday: 'long',
+                      day: 'numeric',
+                      month: 'long',
+                    })}
+                  </div>
+                )}
+                <button
+                  className={`timeline-item ${rest ? 'timeline-rest' : ''}`}
+                  onClick={() => !rest && onSelect([event])}
+                  disabled={rest}
+                >
+                  <span className="timeline-hours">
+                    {formatClock(event.start)}
+                    <small>{formatClock(event.end)}</small>
+                  </span>
+                  <span className="timeline-connector">
+                    <i />
+                  </span>
+                  {rest ? (
+                    <span className="rest-icon">
+                      <Coffee size={18} />
+                    </span>
+                  ) : (
+                    <AppIcon app={event.app} />
+                  )}
+                  <span className="timeline-content">
+                    <strong>
+                      {rest
+                        ? event.kind === 'pause'
+                          ? 'Pausa'
+                          : event.kind === 'idle'
+                            ? 'Ausente ou tela bloqueada'
+                            : 'Intervalo sem coleta'
+                        : event.activityName}
+                    </strong>
+                    <small>
+                      {rest ? 'Fora do tempo ativo' : event.title || event.softwareName}
+                    </small>
+                  </span>
+                  {!rest && <span className="project-pill">{event.projectName}</span>}
+                  <strong className="timeline-duration">
+                    {formatDuration(event.end - event.start)}
+                  </strong>
+                  {!rest && <ChevronRight size={16} />}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
