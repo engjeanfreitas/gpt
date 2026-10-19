@@ -169,10 +169,10 @@ export function Dashboard({
           tone="orange"
         />
         <Metric
-          label="Pausas e ausência"
+          label="Pausas e AFK"
           value={formatDuration(paused + idle)}
           icon={<Coffee size={18} />}
-          note={`${formatDuration(paused)} de pausa · ${formatDuration(idle)} ausente`}
+          note={`${formatDuration(paused)} de pausa · ${formatDuration(idle)} AFK / tela bloqueada`}
           tone="purple"
         />
         <Metric
@@ -486,7 +486,7 @@ export function Timeline({
               ? event.kind === 'pause'
                 ? 'Pausa'
                 : event.kind === 'idle'
-                  ? 'Ausente ou tela bloqueada'
+                  ? 'AFK / ausente ou tela bloqueada'
                   : 'Intervalo sem coleta'
               : event.activityName}
           </strong>

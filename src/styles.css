@@ -315,6 +315,13 @@ input[type='number'] {
 .status-paused i {
   background: #d29562;
 }
+.status-afk {
+  color: #967b49;
+}
+.status-afk i {
+  background: #c29b55;
+  box-shadow: 0 0 0 3px #c29b5514;
+}
 .topbar-separator {
   width: 1px;
   height: 14px;

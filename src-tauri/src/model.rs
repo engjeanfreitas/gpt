@@ -209,8 +209,18 @@ pub struct Snapshot {
     pub pause: Option<PauseState>,
     pub current_project_id: Option<String>,
     pub capturing: bool,
+    pub tracking_status: TrackingStatus,
     pub platform: String,
     pub last_error: Option<String>,
+}
+#[derive(Clone, Copy, Serialize, Debug, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum TrackingStatus {
+    Active,
+    Afk,
+    Locked,
+    Paused,
+    Unknown,
 }
 #[derive(Clone, Debug)]
 pub struct Observation {

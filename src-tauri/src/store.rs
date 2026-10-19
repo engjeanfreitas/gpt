@@ -22,6 +22,7 @@ pub struct Store {
     last_sample: Option<i64>,
     last_flush: i64,
     pub capturing: bool,
+    pub tracking_status: TrackingStatus,
     pub last_error: Option<String>,
 }
 impl Store {
@@ -52,6 +53,7 @@ impl Store {
             last_sample: None,
             last_flush: 0,
             capturing: false,
+            tracking_status: TrackingStatus::Unknown,
             last_error: None,
         })
     }
@@ -114,6 +116,7 @@ impl Store {
             self.persist_event(&event)?;
         }
         self.capturing = false;
+        self.tracking_status = TrackingStatus::Unknown;
         Ok(())
     }
     pub fn set_project(&mut self, project_id: Option<String>, now: i64) -> Result<()> {
@@ -176,6 +179,8 @@ impl Store {
         }
         self.runtime.pause = None;
         self.last_sample = None;
+        self.capturing = false;
+        self.tracking_status = TrackingStatus::Unknown;
         self.write_metadata("runtime", &self.runtime)
     }
     /// Returns true exactly once per deadline, even when no dashboard is open.
@@ -200,6 +205,7 @@ impl Store {
     pub fn observe(&mut self, observation: Option<Observation>, now: i64) -> Result<()> {
         if self.runtime.pause.is_some() {
             self.capturing = false;
+            self.tracking_status = TrackingStatus::Paused;
             self.last_sample = Some(now);
             return Ok(());
         }
@@ -221,9 +227,10 @@ impl Store {
                 self.last_sample = None;
             }
         }
-        let (app, title, kind) = match observation {
-            Some(o) if o.locked || o.idle_seconds >= self.config.settings.idle_seconds => {
-                (String::new(), String::new(), "idle")
+        let (app, title, kind, status) = match observation {
+            Some(o) if o.locked => (String::new(), String::new(), "idle", TrackingStatus::Locked),
+            Some(o) if o.idle_seconds >= self.config.settings.idle_seconds => {
+                (String::new(), String::new(), "idle", TrackingStatus::Afk)
             }
             Some(o) if !o.app.is_empty() => {
                 let excluded = self
@@ -236,12 +243,22 @@ impl Store {
                         !t.is_empty() && o.title.to_lowercase().contains(&t.to_lowercase())
                     });
                 if excluded {
-                    (String::new(), String::new(), "unknown")
+                    (
+                        String::new(),
+                        String::new(),
+                        "unknown",
+                        TrackingStatus::Unknown,
+                    )
                 } else {
-                    (o.app, o.title, "active")
+                    (o.app, o.title, "active", TrackingStatus::Active)
                 }
             }
-            _ => (String::new(), String::new(), "unknown"),
+            _ => (
+                String::new(),
+                String::new(),
+                "unknown",
+                TrackingStatus::Unknown,
+            ),
         };
         let project_id = if kind == "active" {
             self.runtime
@@ -280,6 +297,7 @@ impl Store {
         }
         self.last_sample = Some(now);
         self.capturing = kind == "active";
+        self.tracking_status = status;
         if now - self.last_flush >= 5_000 {
             self.flush(now)?;
         }
@@ -332,6 +350,11 @@ impl Store {
             pause: self.runtime.pause.clone(),
             current_project_id: self.runtime.current_project_id.clone(),
             capturing: self.capturing,
+            tracking_status: if self.runtime.pause.is_some() {
+                TrackingStatus::Paused
+            } else {
+                self.tracking_status
+            },
             platform: std::env::consts::OS.into(),
             last_error: self.last_error.clone(),
         })
@@ -481,6 +504,106 @@ mod tests {
             events.iter().find(|e| e.kind == "unknown").unwrap().end,
             60_000
         );
+    }
+    #[test]
+    fn afk_starts_at_threshold_and_input_resumes_without_losing_time() {
+        let mut s = store();
+        assert_eq!(s.config.settings.idle_seconds, 180);
+        for seconds in 0..=190 {
+            let mut observation = active("TFLM");
+            observation.idle_seconds = seconds;
+            s.observe(Some(observation), 1_000 + seconds as i64 * 1_000)
+                .unwrap();
+            assert_eq!(
+                s.tracking_status,
+                if seconds < 180 {
+                    TrackingStatus::Active
+                } else {
+                    TrackingStatus::Afk
+                }
+            );
+        }
+        assert!(!s.capturing);
+        let afk = s.snapshot(191_000).unwrap();
+        assert_eq!(afk.tracking_status, TrackingStatus::Afk);
+        let idle = afk.events.iter().find(|e| e.kind == "idle").unwrap();
+        assert!(idle.app.is_empty() && idle.title.is_empty() && idle.project_id.is_none());
+        s.observe(Some(active("TFLM")), 192_000).unwrap();
+        s.observe(Some(active("TFLM")), 193_000).unwrap();
+        assert!(s.capturing);
+        assert_eq!(s.tracking_status, TrackingStatus::Active);
+        let events = s.snapshot(193_000).unwrap().events;
+        assert_eq!(
+            events
+                .iter()
+                .filter(|e| e.kind == "active")
+                .map(|e| e.end - e.start)
+                .sum::<i64>(),
+            181_000
+        );
+        assert_eq!(
+            events
+                .iter()
+                .filter(|e| e.kind == "idle")
+                .map(|e| e.end - e.start)
+                .sum::<i64>(),
+            11_000
+        );
+        assert_eq!(events.iter().map(|e| e.end - e.start).sum::<i64>(), 192_000);
+        let mut sorted = events.clone();
+        sorted.sort_by_key(|e| e.start);
+        assert!(sorted.windows(2).all(|pair| pair[0].end == pair[1].start));
+    }
+    #[test]
+    fn afk_threshold_is_configurable_and_short_input_breaks_reset_it() {
+        let mut s = store();
+        s.config.settings.idle_seconds = 60;
+        for (i, seconds) in [59, 0, 59, 60, 0].into_iter().enumerate() {
+            let mut observation = active("A");
+            observation.idle_seconds = seconds;
+            s.observe(Some(observation), 1_000 + i as i64 * 1_000)
+                .unwrap();
+            assert_eq!(
+                s.tracking_status,
+                if seconds < 60 {
+                    TrackingStatus::Active
+                } else {
+                    TrackingStatus::Afk
+                }
+            );
+        }
+    }
+    #[test]
+    fn lock_unknown_and_explicit_pause_are_distinct_from_afk() {
+        let mut s = store();
+        let mut observation = active("A");
+        observation.locked = true;
+        s.observe(Some(observation), 1_000).unwrap();
+        assert_eq!(s.tracking_status, TrackingStatus::Locked);
+        s.observe(None, 2_000).unwrap();
+        assert_eq!(s.tracking_status, TrackingStatus::Unknown);
+        s.start_pause(None, 3_000).unwrap();
+        let mut afk = active("Should not be captured");
+        afk.idle_seconds = 300;
+        s.observe(Some(afk), 4_000).unwrap();
+        assert_eq!(
+            s.snapshot(4_000).unwrap().tracking_status,
+            TrackingStatus::Paused
+        );
+        s.resume(5_000).unwrap();
+        let events = s.snapshot(5_000).unwrap().events;
+        assert_eq!(
+            events
+                .iter()
+                .filter(|e| e.kind == "pause")
+                .map(|e| e.end - e.start)
+                .sum::<i64>(),
+            2_000
+        );
+        assert!(events
+            .iter()
+            .filter(|e| e.kind == "idle")
+            .all(|e| e.end <= 3_000));
     }
     #[test]
     fn pause_alarm_fires_once_and_waits_for_resume() {

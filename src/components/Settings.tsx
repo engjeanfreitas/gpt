@@ -171,8 +171,8 @@ export function Settings({
             <ShieldCheck size={19} className="muted" />
           </div>
           <Field
-            label="Considerar ausência após (minutos)"
-            hint="A tolerância anterior a esse limite conta como tempo ativo. Bloqueio de tela interrompe a atividade imediatamente."
+            label="Detectar AFK após (minutos sem mouse ou teclado)"
+            hint="Recomendado: 3 minutos. Ao atingir o limite, a ausência deixa de somar tempo ativo; os minutos de tolerância anteriores continuam ativos. A coleta volta automaticamente com mouse ou teclado. Tela bloqueada interrompe a atividade imediatamente. Para leitura ou reuniões, aumente o limite."
           >
             <input
               type="number"

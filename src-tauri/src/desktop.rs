@@ -210,12 +210,14 @@ pub fn run() {
                         }
                         #[cfg(windows)]
                         {
-                            let observation = crate::windows::read_window().map(|o| Observation {
-                                app: o.app,
-                                title: o.title,
-                                idle_seconds: o.idle_seconds,
-                                locked: o.locked,
-                            });
+                            let observation =
+                                crate::windows::read_window(store.config.settings.idle_seconds)
+                                    .map(|o| Observation {
+                                        app: o.app,
+                                        title: o.title,
+                                        idle_seconds: o.idle_seconds,
+                                        locked: o.locked,
+                                    });
                             if let Err(e) = store.observe(observation, now) {
                                 store.last_error = Some(e);
                             }
@@ -235,10 +237,16 @@ pub fn run() {
                                 None => "Tempo · Em pausa até você voltar".into(),
                             };
                         } else {
-                            tooltip.push_str(if store.capturing {
-                                "Tempo · Coleta ativa"
-                            } else {
-                                "Tempo · Aguardando atividade"
+                            tooltip.push_str(match store.tracking_status {
+                                crate::model::TrackingStatus::Active => "Tempo · Coleta ativa",
+                                crate::model::TrackingStatus::Afk => {
+                                    "Tempo · AFK / ausente · retomada automática"
+                                }
+                                crate::model::TrackingStatus::Locked => "Tempo · Tela bloqueada",
+                                crate::model::TrackingStatus::Paused => "Tempo · Em pausa",
+                                crate::model::TrackingStatus::Unknown => {
+                                    "Tempo · Aguardando sinal de coleta"
+                                }
                             });
                         }
                         if maintenance == 0 {

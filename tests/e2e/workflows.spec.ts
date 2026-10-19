@@ -169,3 +169,87 @@ test('agrupa trocas rápidas, mantém totais e permite editar só um detalhe', a
       .locator('.row-time'),
   ).toHaveText('2 min');
 });
+
+test('identifica AFK, distingue falha de coleta e permite configurar o limite', async ({
+  page,
+}) => {
+  await page.evaluate(async () => {
+    const source = '/src/lib/demo.ts';
+    const { createDemo } = await import(source);
+    const data = createDemo();
+    const start = new Date().setHours(8, 0, 0, 0);
+    data.events = [
+      {
+        id: 'work',
+        start,
+        end: start + 60_000,
+        app: 'eberick.exe',
+        title: 'TFLM',
+        domain: null,
+        projectId: 'tflm',
+        kind: 'active',
+      },
+      {
+        id: 'afk',
+        start: start + 60_000,
+        end: start + 360_000,
+        app: '',
+        title: '',
+        domain: null,
+        projectId: null,
+        kind: 'idle',
+      },
+    ];
+    data.platform = 'windows';
+    data.trackingStatus = 'afk';
+    localStorage.setItem('tempo-native-test', JSON.stringify(data));
+  });
+  // Exercise the desktop IPC boundary using simulated collector snapshots.
+  await page.addInitScript(() => {
+    Object.assign(window, {
+      __TAURI_INTERNALS__: {
+        transformCallback: () => 1,
+        unregisterCallback: () => {},
+        invoke: async (command: string, args: { config?: unknown } = {}) => {
+          const data = JSON.parse(localStorage.getItem('tempo-native-test')!);
+          if (command === 'get_snapshot') return data;
+          if (command === 'get_autostart') return false;
+          if (command === 'save_config') {
+            data.config = args.config;
+            localStorage.setItem('tempo-native-test', JSON.stringify(data));
+          }
+          return 1;
+        },
+      },
+      __TAURI_EVENT_PLUGIN_INTERNALS__: { unregisterListener: () => {} },
+    });
+  });
+  await page.reload();
+  await expect(page.locator('.capture-status')).toHaveText('AFK / ausente');
+  await expect(page.locator('.table-footer b')).toHaveText('1 min');
+  await expect(page.locator('.metric').filter({ hasText: 'Pausas e AFK' })).toContainText('5 min');
+  await page.getByRole('button', { name: 'Linha do tempo', exact: true }).click();
+  const idle = page.locator('.timeline-rest');
+  await expect(idle).toContainText('AFK / ausente ou tela bloqueada');
+  await expect(idle).toContainText('5 min');
+  for (const [trackingStatus, label] of [
+    ['locked', 'Tela bloqueada'],
+    ['unknown', 'Aguardando sinal de coleta'],
+    ['active', 'Coleta ativa'],
+  ]) {
+    await page.evaluate((status) => {
+      const data = JSON.parse(localStorage.getItem('tempo-native-test')!);
+      data.trackingStatus = status;
+      data.capturing = status === 'active';
+      localStorage.setItem('tempo-native-test', JSON.stringify(data));
+    }, trackingStatus);
+    await expect(page.locator('.capture-status')).toHaveText(label);
+  }
+  await page.getByRole('button', { name: 'Preferências', exact: true }).click();
+  await expect(page.getByLabel('Detectar AFK após')).toHaveValue('3');
+  await page.getByLabel('Detectar AFK após').fill('5');
+  await page.getByRole('button', { name: 'Salvar preferências' }).click();
+  await page.reload();
+  await page.getByRole('button', { name: 'Preferências', exact: true }).click();
+  await expect(page.getByLabel('Detectar AFK após')).toHaveValue('5');
+});

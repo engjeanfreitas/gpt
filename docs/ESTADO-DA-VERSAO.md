@@ -1,32 +1,34 @@
-# Tempo 0.1.1 — estado da versão
+# Tempo 0.1.2 — estado da versão
 
 Implementação disponível no repositório, com distribuição de teste para Windows x64.
 
 | Verificação executada nesta instância Linux | Resultado |
 |---|---|
 | Classificação, regras, recorte de períodos, timeline condensada, reagrupamento e CSV (Vitest) | 16 testes aprovados |
-| SQLite, pausa, recuperação, exclusões, contexto de projeto e integridade dos intervalos (Rust) | 11 testes aprovados |
-| Projetos, atribuição de 3h do TFLM, regras, pausa, layout e edição de detalhes da timeline (Chromium/Playwright) | 6 testes aprovados |
+| SQLite, pausa, recuperação, exclusões, contexto de projeto e integridade dos intervalos (Rust) | 14 testes aprovados |
+| Projetos, atribuição de 3h do TFLM, regras, pausa, layout e edição de detalhes da timeline (Chromium/Playwright) | 7 testes aprovados |
 | TypeScript e build de produção da interface | Aprovados |
-| Clippy do núcleo Rust e do alvo Windows completo, sem warnings | Aprovados na 0.1.0; código Rust sem alteração na 0.1.1 |
+| Clippy do núcleo Rust e do alvo Windows completo, sem warnings | Aprovados para o código atual |
 | Compilação de produção para `x86_64-pc-windows-gnu` | Executável gerado |
 | Empacotamento NSIS a partir de Linux | Instalador gerado; payload inclui `WebView2Loader.dll` |
 | Integridade do arquivo ZIP portátil | Verificada |
 
 O instalador mede aproximadamente 3 MiB. Isso é tamanho em disco, não consumo de RAM. CPU, memória e comportamento do coletor precisam ser medidos no Windows.
 
-As distribuições publicadas estão em `downloads/v0.1.1/` e na Release `v0.1.1` do GitHub:
+As distribuições publicadas estão em `downloads/v0.1.2/` e na Release `v0.1.2` do GitHub:
 
-- `Tempo-0.1.1-windows-x64-setup.exe`
-- `Tempo-0.1.1-windows-x64-portable.zip`
+- `Tempo-0.1.2-windows-x64-setup.exe`
+- `Tempo-0.1.2-windows-x64-portable.zip`
 - `SHA256SUMS.txt`
 
 A distribuição portátil inclui executável, loader do WebView2 e instruções. O instalador detecta o WebView2 e pode baixar seu runtime da Microsoft caso necessário. Ambos são distribuições de teste sem assinatura de código.
 
 Não foi executado um Windows real nesta instância. Portanto, captura de janelas do Eberick, áudio físico, notificações do sistema, bloqueio/suspensão, instalação e inicialização no login **ainda precisam dos ensaios em [VALIDACAO-WINDOWS.md](VALIDACAO-WINDOWS.md)**. A compilação e os testes de simulação não substituem essa validação.
 
-A 0.1.1 agrupa trocas de tela inferiores a cinco minutos somente na apresentação. Os testes verificam a preservação dos tempos exatos e da classificação por categoria, software e projeto, os limites de pausa/dia/lacuna, o limiar inclusivo de cinco minutos e a edição individual dos detalhes. A inspeção visual em Chromium confirmou o bloco expandido em desktop e em largura de 390 px sem rolagem horizontal da página.
+A 0.1.2 agrupa trocas de tela inferiores a cinco minutos somente na apresentação. Os testes verificam a preservação dos tempos exatos e da classificação por categoria, software e projeto, os limites de pausa/dia/lacuna, o limiar inclusivo de cinco minutos e a edição individual dos detalhes. A inspeção visual em Chromium confirmou o bloco expandido em desktop e em largura de 390 px sem rolagem horizontal da página.
 
-A atualização mantém o identificador `com.tempo.desktop`, o caminho e o esquema SQLite. O assistente NSIS permite atualizar sobre a instalação existente; a preservação em uma atualização real de 0.1.0 para 0.1.1 está no roteiro de ensaios Windows. Não há atualizador automático.
+A atualização mantém o identificador `com.tempo.desktop`, o caminho e o esquema SQLite. O assistente NSIS permite atualizar sobre a instalação existente; a preservação em uma atualização real de 0.1.0 para 0.1.2 está no roteiro de ensaios Windows. Não há atualizador automático.
+
+A 0.1.2 também identifica AFK no cabeçalho e na bandeja, com limite padrão de três minutos configurável. A leitura de entrada da sessão antecede a consulta do processo em primeiro plano. Os testes novos cobrem transições, limite, conservação das durações e preferência persistida; o fluxo de navegador usa snapshots via IPC simulado. A ausência é contabilizada a partir do limite, sem retroação, como explicado em [AFK.md](AFK.md).
 
 O aplicativo desktop começa sem dados de exemplo; a interface de navegador é uma demonstração identificada e não monitora o computador. Extensão de navegador, importação de histórico de terceiros, divisão manual de intervalos e vigência de regras por data ficam para próximas versões, conforme os limites registrados no README.

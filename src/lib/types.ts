@@ -81,6 +81,7 @@ export interface Snapshot {
   pause: PauseState | null;
   currentProjectId: string | null;
   capturing: boolean;
+  trackingStatus: 'active' | 'afk' | 'locked' | 'paused' | 'unknown';
   platform: string;
   lastError: string | null;
 }

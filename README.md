@@ -2,9 +2,9 @@
 
 Rastreador pessoal de tempo para Windows. Organize o histórico em árvore e explore os mesmos intervalos por atividade, software ou projeto.
 
-**Download da versão de teste:** [Instalador Windows x64](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.1/Tempo-0.1.1-windows-x64-setup.exe) · [ZIP portátil](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.1/Tempo-0.1.1-windows-x64-portable.zip) · [Página da versão](https://github.com/engjeanfreitas/gpt/releases/tag/v0.1.1).
+**Download da versão de teste:** [Instalador Windows x64](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.2/Tempo-0.1.2-windows-x64-setup.exe) · [ZIP portátil](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.2/Tempo-0.1.2-windows-x64-portable.zip) · [Página da versão](https://github.com/engjeanfreitas/gpt/releases/tag/v0.1.2).
 
-Esta distribuição não tem assinatura de código e ainda requer os testes de captura e áudio em um Windows real. As [notas da versão](docs/RELEASE-NOTES-v0.1.1.md) descrevem recursos e limites.
+Esta distribuição não tem assinatura de código e ainda requer os testes de captura e áudio em um Windows real. As [notas da versão](docs/RELEASE-NOTES-v0.1.2.md) descrevem recursos e limites.
 
 Esta primeira versão inclui dashboard, timeline, projetos com estimativa de horas, regras reprocessáveis, atribuições manuais, nomes amigáveis, categorias hierárquicas, exportação CSV e pausa configurável com contador, notificação e alarme.
 
@@ -61,6 +61,14 @@ Pais da árvore incluem os filhos; o total geral soma apenas os intervalos ativo
 
 ## Pausa e coleta em segundo plano
 
+### Ausência automática (AFK)
+
+Após **3 minutos sem mouse ou teclado**, o Tempo indica **AFK / ausente** e passa a registrar ausência fora das atividades e projetos. A coleta volta automaticamente com nova entrada, mantendo o projeto selecionado. Ajuste o limite entre **1 e 60 minutos** nas preferências; para leitura ou reuniões, 5–10 minutos podem fazer mais sentido. Os minutos anteriores ao limite são tolerância ativa, sem retroação. Bloqueio de tela interrompe o tempo ativo imediatamente.
+
+O cabeçalho e a bandeja distinguem AFK, tela bloqueada, pausa e espera de sinal de coleta. O dashboard e a timeline identificam ausências como **AFK / tela bloqueada**, em registros separados dos blocos de mudanças rápidas. Consulte o [guia de AFK](docs/AFK.md).
+
+### Pausa manual e bandeja
+
 - Fechar o dashboard **destrói a WebView e mantém o processo da bandeja**. Reabra pelo ícone. Para parar o aplicativo, use **Encerrar Tempo** na bandeja.
 - A pausa interrompe a captura de contexto e separa sua duração das horas de trabalho.
 - O vencimento emite um aviso visual e um toque configurável, mesmo com o dashboard fechado.
@@ -83,7 +91,7 @@ O botão de exclusão apaga o período selecionado, independentemente dos filtro
 
 ## Atualizar o aplicativo
 
-Encerre o Tempo pela bandeja e execute o instalador da nova versão, com o mesmo usuário e local de instalação. Não é preciso desinstalar manualmente; histórico e configurações ficam no diretório de dados separado. A versão 0.1.1 mantém o mesmo formato do banco. Se optar por desinstalar, não marque a exclusão dos dados do aplicativo. A distribuição portátil é atualizada substituindo os arquivos extraídos com o programa encerrado.
+Encerre o Tempo pela bandeja e execute o instalador da nova versão, com o mesmo usuário e local de instalação. Não é preciso desinstalar manualmente; histórico e configurações ficam no diretório de dados separado. A versão 0.1.2 mantém o mesmo formato do banco. Se optar por desinstalar, não marque a exclusão dos dados do aplicativo. A distribuição portátil é atualizada substituindo os arquivos extraídos com o programa encerrado.
 
 Regras, categorias, nomes, projetos e preferências têm efeito imediato, sem reinstalação. Mudanças no código exigem uma nova versão instalada; o Tempo ainda não possui atualizador automático.
 

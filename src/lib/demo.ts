@@ -120,6 +120,7 @@ export function createDemo(): Snapshot {
     pause: null,
     currentProjectId: 'tflm',
     capturing: false,
+    trackingStatus: 'unknown',
     platform: 'demo',
     lastError: null,
   };

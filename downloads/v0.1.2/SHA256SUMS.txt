@@ -1,0 +1,2 @@
+f92fc78f63e9e4f92240f332e7fa71f3d51c156e47ead0ced51325ee170a0344  Tempo-0.1.2-windows-x64-setup.exe
+d92a26bf8277f68efd09bab6486cd9236604dad51a0a2cb260898f60d9190ebc  Tempo-0.1.2-windows-x64-portable.zip

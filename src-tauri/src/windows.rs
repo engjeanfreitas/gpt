@@ -131,7 +131,7 @@ fn desktop_is_locked() -> bool {
         !String::from_utf16_lossy(&name[..length]).eq_ignore_ascii_case("default")
     }
 }
-pub fn read_window() -> Option<WindowObservation> {
+pub fn read_window(idle_threshold: u64) -> Option<WindowObservation> {
     if LOCKED.load(Ordering::Relaxed) || SUSPENDED.load(Ordering::Relaxed) || desktop_is_locked() {
         return Some(WindowObservation {
             app: String::new(),
@@ -141,6 +141,24 @@ pub fn read_window() -> Option<WindowObservation> {
         });
     }
     unsafe {
+        // Read session input independently of foreground-process permissions. AFK
+        // remains detectable even if the foreground window cannot be inspected.
+        let mut info = LastInputInfo {
+            size: std::mem::size_of::<LastInputInfo>() as u32,
+            time: 0,
+        };
+        if GetLastInputInfo(&mut info) == 0 {
+            return None;
+        }
+        let idle_seconds = GetTickCount().wrapping_sub(info.time) as u64 / 1000;
+        if idle_seconds >= idle_threshold {
+            return Some(WindowObservation {
+                app: String::new(),
+                title: String::new(),
+                idle_seconds,
+                locked: false,
+            });
+        }
         let window = GetForegroundWindow();
         if window.is_null() {
             return None;
@@ -162,18 +180,10 @@ pub fn read_window() -> Option<WindowObservation> {
         let app = path.rsplit('\\').next().unwrap_or("").to_lowercase();
         let mut title = [0u16; 4096];
         let count = GetWindowTextW(window, title.as_mut_ptr(), title.len() as i32).max(0) as usize;
-        let mut info = LastInputInfo {
-            size: std::mem::size_of::<LastInputInfo>() as u32,
-            time: 0,
-        };
-        if GetLastInputInfo(&mut info) == 0 {
-            return None;
-        }
-        let elapsed = GetTickCount().wrapping_sub(info.time) as u64;
         Some(WindowObservation {
             app,
             title: String::from_utf16_lossy(&title[..count]),
-            idle_seconds: elapsed / 1000,
+            idle_seconds,
             locked: false,
         })
     }

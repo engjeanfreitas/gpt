@@ -351,14 +351,26 @@ export default function App() {
             Meu espaço <span>/</span> {nav.find((n) => n[0] === page)?.[1]}
           </div>
           <div className="topbar-right">
-            <span className={`capture-status ${paused ? 'status-paused' : ''}`}>
+            <span
+              className={`capture-status ${paused ? 'status-paused' : service.isDesktop && ['afk', 'locked'].includes(snapshot.trackingStatus) ? 'status-afk' : ''}`}
+              role="status"
+              title={
+                service.isDesktop && snapshot.trackingStatus === 'afk'
+                  ? 'Sem mouse ou teclado pelo limite configurado. A coleta volta automaticamente quando houver entrada.'
+                  : undefined
+              }
+            >
               <i />
               {paused
                 ? 'Em pausa'
                 : service.isDesktop
-                  ? snapshot.capturing
-                    ? 'Coleta ativa'
-                    : 'Aguardando atividade'
+                  ? snapshot.trackingStatus === 'afk'
+                    ? 'AFK / ausente'
+                    : snapshot.trackingStatus === 'locked'
+                      ? 'Tela bloqueada'
+                      : snapshot.capturing
+                        ? 'Coleta ativa'
+                        : 'Aguardando sinal de coleta'
                   : 'Modo demonstração'}
             </span>
             <span className="topbar-separator" />
