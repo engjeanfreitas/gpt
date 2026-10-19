@@ -346,12 +346,12 @@ export function RuleEditor({
           </Field>
           <Field
             label="Prioridade"
-            hint="O maior número vence. Empates são resolvidos pelo identificador."
+            hint="O maior número vence. Padrões usam prioridade negativa; novas regras começam em 30."
           >
             <input
               type="number"
               required
-              min="0"
+              min="-1000"
               max="1000"
               value={priority}
               onChange={(e) => setPriority(Number(e.target.value))}

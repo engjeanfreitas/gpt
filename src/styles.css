@@ -1444,6 +1444,22 @@ h1 {
 .rules-card {
   overflow: hidden;
 }
+.rules-card .card-heading {
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+}
+.rules-card .search-field {
+  flex: 0 1 260px;
+  width: 100%;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.rules-card .search-field input {
+  width: 100%;
+  min-width: 0;
+  font-size: 11px;
+}
 .rules-table-head,
 .rule-row {
   display: grid;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Bell, Check, FolderTree, Play, Plus, Save, ShieldCheck, Trash2 } from 'lucide-react';
-import { categoryPath, isInCategory } from '../lib/engine';
+import { categoryColor, categoryPath, isInCategory } from '../lib/engine';
 import { COLORS } from '../lib/defaults';
 import { Field, Modal } from './ui';
 import { playAlarm, unlockAudio } from '../lib/alarm';
@@ -266,7 +266,10 @@ export function Settings({
           <div className="category-settings">
             {config.categories.map((c) => (
               <button key={c.id} onClick={() => setCategory(c)}>
-                <span className="category-dot" style={{ background: c.color }} />
+                <span
+                  className="category-dot"
+                  style={{ background: categoryColor(c.id, config.categories) }}
+                />
                 <span>
                   {categoryPath(c.id, config.categories)
                     .map((c) => c.name)
@@ -377,20 +380,31 @@ function CategoryEditor({
         </Field>
         <div className="field">
           <span>Cor</span>
-          <div className="color-options">
-            {COLORS.map((c) => (
-              <button
-                key={c}
-                type="button"
-                style={{ background: c }}
-                aria-label={`Cor ${c}`}
-                aria-pressed={color === c}
-                onClick={() => setColor(c)}
-              >
-                {color === c && <Check size={16} />}
-              </button>
-            ))}
-          </div>
+          {parentId ? (
+            <p className="modal-note">
+              <span
+                className="category-dot"
+                style={{ background: categoryColor(parentId, config.categories) }}
+              />
+              Cor herdada de {categoryPath(parentId, config.categories)[0]?.name}. Para alterá-la,
+              edite a categoria principal.
+            </p>
+          ) : (
+            <div className="color-options">
+              {COLORS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  style={{ background: c }}
+                  aria-label={`Cor ${c}`}
+                  aria-pressed={color === c}
+                  onClick={() => setColor(c)}
+                >
+                  {color === c && <Check size={16} />}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         {error && (
           <p className="form-error" role="alert">

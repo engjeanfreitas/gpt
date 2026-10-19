@@ -1,10 +1,13 @@
 import { invoke } from '@tauri-apps/api/core';
 import { createDemo } from './demo';
-import { upgradePalette } from './colors';
+import { upgradeCategoryDefaults, upgradePalette } from './colors';
+import { installCommonDefaults } from './common-defaults';
 import type { Configuration, Snapshot } from './types';
 
 export const isDesktop = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
 const STORAGE_KEY = 'tempo-demo-v1';
+const CATEGORY_COLORS_KEY = 'tempo-category-defaults-v1';
+const COMMON_RULES_KEY = 'tempo-common-defaults-v1';
 let memory: Snapshot | undefined;
 function demo(): Snapshot {
   if (!memory) {
@@ -14,9 +17,24 @@ function demo(): Snapshot {
       /* A damaged demo can be reset. */
     }
     if (!memory?.config?.settings) memory = createDemo();
-    if (upgradePalette(memory.config)) {
+    let colorsChanged = upgradePalette(memory.config);
+    let categoryDefaultsApplied = false;
+    let commonDefaultsApplied = false;
+    try {
+      categoryDefaultsApplied = !!localStorage.getItem(CATEGORY_COLORS_KEY);
+      commonDefaultsApplied = !!localStorage.getItem(COMMON_RULES_KEY);
+    } catch {
+      /* Storage can be unavailable. */
+    }
+    if (!categoryDefaultsApplied) {
+      colorsChanged = upgradeCategoryDefaults(memory.config) || colorsChanged;
+    }
+    if (!commonDefaultsApplied) installCommonDefaults(memory.config);
+    if (colorsChanged || !categoryDefaultsApplied || !commonDefaultsApplied) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(memory));
+        localStorage.setItem(CATEGORY_COLORS_KEY, 'true');
+        localStorage.setItem(COMMON_RULES_KEY, 'true');
       } catch {
         /* Keep the new palette in memory if browser storage is full. */
       }

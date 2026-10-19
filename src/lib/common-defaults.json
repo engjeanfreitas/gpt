@@ -1,0 +1,1577 @@
+{
+  "categories": [
+    {
+      "id": "common-programming",
+      "name": "Programação",
+      "color": "#16A34A",
+      "parentId": "work"
+    },
+    {
+      "id": "common-documents",
+      "name": "Documentos e escritório",
+      "color": "#16A34A",
+      "parentId": "work"
+    },
+    {
+      "id": "common-image",
+      "name": "Imagem e design",
+      "color": "#16A34A",
+      "parentId": "work"
+    },
+    {
+      "id": "common-video-editing",
+      "name": "Edição de vídeo",
+      "color": "#16A34A",
+      "parentId": "work"
+    },
+    {
+      "id": "common-audio-editing",
+      "name": "Edição de áudio",
+      "color": "#16A34A",
+      "parentId": "work"
+    },
+    {
+      "id": "common-3d",
+      "name": "Modelagem 3D",
+      "color": "#16A34A",
+      "parentId": "work"
+    },
+    {
+      "id": "common-messages",
+      "name": "Mensagens e e-mail",
+      "color": "#16A34A",
+      "parentId": "work"
+    },
+    {
+      "id": "common-meetings",
+      "name": "Reuniões",
+      "color": "#16A34A",
+      "parentId": "work"
+    },
+    {
+      "id": "common-references",
+      "name": "Pesquisa e referências",
+      "color": "#2563EB",
+      "parentId": "study"
+    },
+    {
+      "id": "common-videos",
+      "name": "Vídeos",
+      "color": "#9333EA",
+      "parentId": "personal"
+    },
+    {
+      "id": "common-music",
+      "name": "Música",
+      "color": "#9333EA",
+      "parentId": "personal"
+    },
+    {
+      "id": "common-games",
+      "name": "Jogos",
+      "color": "#9333EA",
+      "parentId": "personal"
+    },
+    {
+      "id": "common-social",
+      "name": "Redes sociais",
+      "color": "#9333EA",
+      "parentId": "personal"
+    }
+  ],
+  "activities": [
+    {
+      "id": "common-programming",
+      "name": "Programação",
+      "categoryId": "common-programming"
+    },
+    {
+      "id": "common-documents",
+      "name": "Documentos e escritório",
+      "categoryId": "common-documents"
+    },
+    {
+      "id": "common-image",
+      "name": "Imagem e design",
+      "categoryId": "common-image"
+    },
+    {
+      "id": "common-video-editing",
+      "name": "Edição de vídeo",
+      "categoryId": "common-video-editing"
+    },
+    {
+      "id": "common-audio-editing",
+      "name": "Edição de áudio",
+      "categoryId": "common-audio-editing"
+    },
+    {
+      "id": "common-3d",
+      "name": "Modelagem 3D",
+      "categoryId": "common-3d"
+    },
+    {
+      "id": "common-messages",
+      "name": "Mensagens e e-mail",
+      "categoryId": "common-messages"
+    },
+    {
+      "id": "common-meetings",
+      "name": "Reuniões",
+      "categoryId": "common-meetings"
+    },
+    {
+      "id": "common-references",
+      "name": "Pesquisa e referências",
+      "categoryId": "common-references"
+    },
+    {
+      "id": "common-videos",
+      "name": "Vídeos",
+      "categoryId": "common-videos"
+    },
+    {
+      "id": "common-music",
+      "name": "Música",
+      "categoryId": "common-music"
+    },
+    {
+      "id": "common-games",
+      "name": "Jogos",
+      "categoryId": "common-games"
+    },
+    {
+      "id": "common-social",
+      "name": "Redes sociais",
+      "categoryId": "common-social"
+    },
+    {
+      "id": "common-cad",
+      "name": "Desenho técnico e BIM",
+      "categoryId": "engineering"
+    }
+  ],
+  "softwares": [
+    {
+      "executable": "devenv.exe",
+      "name": "Visual Studio",
+      "categoryId": "common-programming"
+    },
+    {
+      "executable": "pycharm64.exe",
+      "name": "PyCharm",
+      "categoryId": "common-programming"
+    },
+    {
+      "executable": "idea64.exe",
+      "name": "IntelliJ IDEA",
+      "categoryId": "common-programming"
+    },
+    {
+      "executable": "notepad++.exe",
+      "name": "Notepad++",
+      "categoryId": "common-programming"
+    },
+    {
+      "executable": "winword.exe",
+      "name": "Word",
+      "categoryId": "common-documents"
+    },
+    {
+      "executable": "powerpnt.exe",
+      "name": "PowerPoint",
+      "categoryId": "common-documents"
+    },
+    {
+      "executable": "soffice.bin",
+      "name": "LibreOffice",
+      "categoryId": "common-documents"
+    },
+    {
+      "executable": "retext.exe",
+      "name": "ReText",
+      "categoryId": "common-documents"
+    },
+    {
+      "executable": "gimp-3.exe",
+      "name": "GIMP 3",
+      "categoryId": "common-image"
+    },
+    {
+      "executable": "gimp-2.10.exe",
+      "name": "GIMP 2",
+      "categoryId": "common-image"
+    },
+    {
+      "executable": "inkscape.exe",
+      "name": "Inkscape",
+      "categoryId": "common-image"
+    },
+    {
+      "executable": "photoshop.exe",
+      "name": "Photoshop",
+      "categoryId": "common-image"
+    },
+    {
+      "executable": "kdenlive.exe",
+      "name": "Kdenlive",
+      "categoryId": "common-video-editing"
+    },
+    {
+      "executable": "adobe premiere pro.exe",
+      "name": "Adobe Premiere Pro",
+      "categoryId": "common-video-editing"
+    },
+    {
+      "executable": "audacity.exe",
+      "name": "Audacity",
+      "categoryId": "common-audio-editing"
+    },
+    {
+      "executable": "blender.exe",
+      "name": "Blender",
+      "categoryId": "common-3d"
+    },
+    {
+      "executable": "acad.exe",
+      "name": "AutoCAD",
+      "categoryId": "engineering"
+    },
+    {
+      "executable": "revit.exe",
+      "name": "Revit",
+      "categoryId": "engineering"
+    },
+    {
+      "executable": "ms-teams.exe",
+      "name": "Microsoft Teams",
+      "categoryId": "common-meetings"
+    },
+    {
+      "executable": "teams.exe",
+      "name": "Microsoft Teams clássico",
+      "categoryId": "common-meetings"
+    },
+    {
+      "executable": "zoom.exe",
+      "name": "Zoom",
+      "categoryId": "common-meetings"
+    },
+    {
+      "executable": "slack.exe",
+      "name": "Slack",
+      "categoryId": "common-messages"
+    },
+    {
+      "executable": "whatsapp.exe",
+      "name": "WhatsApp",
+      "categoryId": "common-messages"
+    },
+    {
+      "executable": "telegram.exe",
+      "name": "Telegram",
+      "categoryId": "common-messages"
+    },
+    {
+      "executable": "signal.exe",
+      "name": "Signal",
+      "categoryId": "common-messages"
+    },
+    {
+      "executable": "discord.exe",
+      "name": "Discord",
+      "categoryId": "common-messages"
+    },
+    {
+      "executable": "thunderbird.exe",
+      "name": "Thunderbird",
+      "categoryId": "common-messages"
+    },
+    {
+      "executable": "spotify.exe",
+      "name": "Spotify",
+      "categoryId": "common-music"
+    },
+    {
+      "executable": "deezer.exe",
+      "name": "Deezer",
+      "categoryId": "common-music"
+    },
+    {
+      "executable": "vlc.exe",
+      "name": "VLC",
+      "categoryId": "common-videos"
+    },
+    {
+      "executable": "plex.exe",
+      "name": "Plex",
+      "categoryId": "common-videos"
+    },
+    {
+      "executable": "minecraft.windows.exe",
+      "name": "Minecraft",
+      "categoryId": "common-games"
+    },
+    {
+      "executable": "rimworldwin64.exe",
+      "name": "RimWorld",
+      "categoryId": "common-games"
+    }
+  ],
+  "rules": [
+    {
+      "id": "common-app-code",
+      "name": "Visual Studio Code · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "code.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-app-devenv",
+      "name": "Visual Studio · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "devenv.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-app-pycharm64",
+      "name": "PyCharm · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "pycharm64.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-app-idea64",
+      "name": "IntelliJ IDEA · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "idea64.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-app-notepad++",
+      "name": "Notepad++ · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "notepad++.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-app-winword",
+      "name": "Word · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "winword.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-app-powerpnt",
+      "name": "PowerPoint · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "powerpnt.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-app-soffice",
+      "name": "LibreOffice · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "soffice.bin",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-app-retext",
+      "name": "ReText · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "retext.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-app-gimp-3",
+      "name": "GIMP 3 · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "gimp-3.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-image",
+      "projectId": null
+    },
+    {
+      "id": "common-app-gimp-2.10",
+      "name": "GIMP 2 · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "gimp-2.10.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-image",
+      "projectId": null
+    },
+    {
+      "id": "common-app-inkscape",
+      "name": "Inkscape · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "inkscape.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-image",
+      "projectId": null
+    },
+    {
+      "id": "common-app-photoshop",
+      "name": "Photoshop · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "photoshop.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-image",
+      "projectId": null
+    },
+    {
+      "id": "common-app-kdenlive",
+      "name": "Kdenlive · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "kdenlive.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-video-editing",
+      "projectId": null
+    },
+    {
+      "id": "common-app-adobe-premiere-pro",
+      "name": "Adobe Premiere Pro · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "adobe premiere pro.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-video-editing",
+      "projectId": null
+    },
+    {
+      "id": "common-app-audacity",
+      "name": "Audacity · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "audacity.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-audio-editing",
+      "projectId": null
+    },
+    {
+      "id": "common-app-blender",
+      "name": "Blender · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "blender.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-3d",
+      "projectId": null
+    },
+    {
+      "id": "common-app-acad",
+      "name": "AutoCAD · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "acad.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-cad",
+      "projectId": null
+    },
+    {
+      "id": "common-app-revit",
+      "name": "Revit · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "revit.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-cad",
+      "projectId": null
+    },
+    {
+      "id": "common-app-ms-teams",
+      "name": "Microsoft Teams · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "ms-teams.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-meetings",
+      "projectId": null
+    },
+    {
+      "id": "common-app-teams",
+      "name": "Microsoft Teams clássico · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "teams.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-meetings",
+      "projectId": null
+    },
+    {
+      "id": "common-app-zoom",
+      "name": "Zoom · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "zoom.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-meetings",
+      "projectId": null
+    },
+    {
+      "id": "common-app-slack",
+      "name": "Slack · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "slack.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-messages",
+      "projectId": null
+    },
+    {
+      "id": "common-app-whatsapp",
+      "name": "WhatsApp · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "whatsapp.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-messages",
+      "projectId": null
+    },
+    {
+      "id": "common-app-telegram",
+      "name": "Telegram · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "telegram.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-messages",
+      "projectId": null
+    },
+    {
+      "id": "common-app-signal",
+      "name": "Signal · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "signal.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-messages",
+      "projectId": null
+    },
+    {
+      "id": "common-app-discord",
+      "name": "Discord · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "discord.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-messages",
+      "projectId": null
+    },
+    {
+      "id": "common-app-thunderbird",
+      "name": "Thunderbird · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "thunderbird.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-messages",
+      "projectId": null
+    },
+    {
+      "id": "common-app-spotify",
+      "name": "Spotify · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "spotify.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-app-deezer",
+      "name": "Deezer · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "deezer.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-app-vlc",
+      "name": "VLC · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "vlc.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-app-plex",
+      "name": "Plex · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "plex.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-app-minecraft.windows",
+      "name": "Minecraft · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "minecraft.windows.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-games",
+      "projectId": null
+    },
+    {
+      "id": "common-app-rimworldwin64",
+      "name": "RimWorld · padrão",
+      "enabled": true,
+      "priority": -100,
+      "app": "rimworldwin64.exe",
+      "titleContains": "",
+      "domain": "",
+      "activityId": "common-games",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-github",
+      "name": "GitHub no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "GitHub",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-stackoverflow",
+      "name": "Stack Overflow no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Stack Overflow",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-gitlab",
+      "name": "GitLab no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "GitLab",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-docs",
+      "name": "Google Docs no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Google Docs",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-docs-pt",
+      "name": "Documentos Google no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Documentos Google",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-youtube",
+      "name": "YouTube no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "YouTube",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-netflix",
+      "name": "Netflix no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Netflix",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-twitch",
+      "name": "Twitch no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Twitch",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-spotify",
+      "name": "Spotify no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Spotify",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-deezer",
+      "name": "Deezer no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Deezer",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-reddit",
+      "name": "Reddit no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Reddit",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-facebook",
+      "name": "Facebook no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Facebook",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-instagram",
+      "name": "Instagram no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Instagram",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-gmail",
+      "name": "Gmail no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Gmail",
+      "domain": "",
+      "activityId": "common-messages",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-wikipedia",
+      "name": "Wikipedia no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Wikipedia",
+      "domain": "",
+      "activityId": "common-references",
+      "projectId": null
+    },
+    {
+      "id": "common-web-chrome-wikipedia-pt",
+      "name": "Wikipédia no Chrome · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "chrome.exe",
+      "titleContains": "Wikipédia",
+      "domain": "",
+      "activityId": "common-references",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-github",
+      "name": "GitHub no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "GitHub",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-stackoverflow",
+      "name": "Stack Overflow no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Stack Overflow",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-gitlab",
+      "name": "GitLab no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "GitLab",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-docs",
+      "name": "Google Docs no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Google Docs",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-docs-pt",
+      "name": "Documentos Google no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Documentos Google",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-youtube",
+      "name": "YouTube no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "YouTube",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-netflix",
+      "name": "Netflix no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Netflix",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-twitch",
+      "name": "Twitch no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Twitch",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-spotify",
+      "name": "Spotify no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Spotify",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-deezer",
+      "name": "Deezer no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Deezer",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-reddit",
+      "name": "Reddit no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Reddit",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-facebook",
+      "name": "Facebook no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Facebook",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-instagram",
+      "name": "Instagram no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Instagram",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-gmail",
+      "name": "Gmail no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Gmail",
+      "domain": "",
+      "activityId": "common-messages",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-wikipedia",
+      "name": "Wikipedia no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Wikipedia",
+      "domain": "",
+      "activityId": "common-references",
+      "projectId": null
+    },
+    {
+      "id": "common-web-msedge-wikipedia-pt",
+      "name": "Wikipédia no Edge · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "msedge.exe",
+      "titleContains": "Wikipédia",
+      "domain": "",
+      "activityId": "common-references",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-github",
+      "name": "GitHub no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "GitHub",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-stackoverflow",
+      "name": "Stack Overflow no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Stack Overflow",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-gitlab",
+      "name": "GitLab no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "GitLab",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-docs",
+      "name": "Google Docs no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Google Docs",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-docs-pt",
+      "name": "Documentos Google no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Documentos Google",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-youtube",
+      "name": "YouTube no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "YouTube",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-netflix",
+      "name": "Netflix no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Netflix",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-twitch",
+      "name": "Twitch no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Twitch",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-spotify",
+      "name": "Spotify no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Spotify",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-deezer",
+      "name": "Deezer no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Deezer",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-reddit",
+      "name": "Reddit no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Reddit",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-facebook",
+      "name": "Facebook no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Facebook",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-instagram",
+      "name": "Instagram no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Instagram",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-gmail",
+      "name": "Gmail no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Gmail",
+      "domain": "",
+      "activityId": "common-messages",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-wikipedia",
+      "name": "Wikipedia no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Wikipedia",
+      "domain": "",
+      "activityId": "common-references",
+      "projectId": null
+    },
+    {
+      "id": "common-web-firefox-wikipedia-pt",
+      "name": "Wikipédia no Firefox · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "firefox.exe",
+      "titleContains": "Wikipédia",
+      "domain": "",
+      "activityId": "common-references",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-github",
+      "name": "GitHub no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "GitHub",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-stackoverflow",
+      "name": "Stack Overflow no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Stack Overflow",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-gitlab",
+      "name": "GitLab no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "GitLab",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-docs",
+      "name": "Google Docs no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Google Docs",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-docs-pt",
+      "name": "Documentos Google no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Documentos Google",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-youtube",
+      "name": "YouTube no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "YouTube",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-netflix",
+      "name": "Netflix no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Netflix",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-twitch",
+      "name": "Twitch no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Twitch",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-spotify",
+      "name": "Spotify no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Spotify",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-deezer",
+      "name": "Deezer no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Deezer",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-reddit",
+      "name": "Reddit no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Reddit",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-facebook",
+      "name": "Facebook no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Facebook",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-instagram",
+      "name": "Instagram no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Instagram",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-gmail",
+      "name": "Gmail no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Gmail",
+      "domain": "",
+      "activityId": "common-messages",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-wikipedia",
+      "name": "Wikipedia no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Wikipedia",
+      "domain": "",
+      "activityId": "common-references",
+      "projectId": null
+    },
+    {
+      "id": "common-web-brave-wikipedia-pt",
+      "name": "Wikipédia no Brave · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "brave.exe",
+      "titleContains": "Wikipédia",
+      "domain": "",
+      "activityId": "common-references",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-github",
+      "name": "GitHub no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "GitHub",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-stackoverflow",
+      "name": "Stack Overflow no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Stack Overflow",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-gitlab",
+      "name": "GitLab no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "GitLab",
+      "domain": "",
+      "activityId": "common-programming",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-docs",
+      "name": "Google Docs no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Google Docs",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-docs-pt",
+      "name": "Documentos Google no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Documentos Google",
+      "domain": "",
+      "activityId": "common-documents",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-youtube",
+      "name": "YouTube no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "YouTube",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-netflix",
+      "name": "Netflix no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Netflix",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-twitch",
+      "name": "Twitch no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Twitch",
+      "domain": "",
+      "activityId": "common-videos",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-spotify",
+      "name": "Spotify no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Spotify",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-deezer",
+      "name": "Deezer no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Deezer",
+      "domain": "",
+      "activityId": "common-music",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-reddit",
+      "name": "Reddit no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Reddit",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-facebook",
+      "name": "Facebook no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Facebook",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-instagram",
+      "name": "Instagram no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Instagram",
+      "domain": "",
+      "activityId": "common-social",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-gmail",
+      "name": "Gmail no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Gmail",
+      "domain": "",
+      "activityId": "common-messages",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-wikipedia",
+      "name": "Wikipedia no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Wikipedia",
+      "domain": "",
+      "activityId": "common-references",
+      "projectId": null
+    },
+    {
+      "id": "common-web-opera-wikipedia-pt",
+      "name": "Wikipédia no Opera · padrão",
+      "enabled": true,
+      "priority": -90,
+      "app": "opera.exe",
+      "titleContains": "Wikipédia",
+      "domain": "",
+      "activityId": "common-references",
+      "projectId": null
+    }
+  ]
+}

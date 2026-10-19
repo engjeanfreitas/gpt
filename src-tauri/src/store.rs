@@ -45,6 +45,12 @@ impl Store {
           CREATE INDEX IF NOT EXISTS events_project ON events(project_id, start);").map_err(db_error)?;
         let mut config: Configuration = Self::read_metadata(&conn, "config")?.unwrap_or_default();
         let upgraded_palette = config.upgrade_palette();
+        let category_defaults_applied: bool =
+            Self::read_metadata(&conn, "category-defaults-v1")?.unwrap_or(false);
+        let upgraded_categories = !category_defaults_applied && config.upgrade_category_defaults();
+        let common_defaults_applied: bool =
+            Self::read_metadata(&conn, "common-defaults-v1")?.unwrap_or(false);
+        let upgraded_rules = !common_defaults_applied && config.install_common_defaults();
         let runtime = Self::read_metadata(&conn, "runtime")?.unwrap_or_default();
         let store = Self {
             conn,
@@ -57,9 +63,18 @@ impl Store {
             tracking_status: TrackingStatus::Unknown,
             last_error: None,
         };
-        if upgraded_palette {
+        // Store seeds and migration markers atomically, including on a first launch.
+        let transaction = store.conn.unchecked_transaction().map_err(db_error)?;
+        if upgraded_palette || upgraded_categories || upgraded_rules || !common_defaults_applied {
             store.write_metadata("config", &store.config)?;
         }
+        if !category_defaults_applied {
+            store.write_metadata("category-defaults-v1", &true)?;
+        }
+        if !common_defaults_applied {
+            store.write_metadata("common-defaults-v1", &true)?;
+        }
+        transaction.commit().map_err(db_error)?;
         Ok(store)
     }
     fn read_metadata<T: serde::de::DeserializeOwned>(
@@ -722,6 +737,94 @@ mod tests {
             .unwrap()
             .unwrap();
         assert_eq!(stored.categories[0].color, "#2563EB");
+    }
+    #[test]
+    fn work_default_becomes_green_once_and_later_user_choices_are_preserved() {
+        let mut s = store();
+        s.config.categories[0].color = "#2563EB".into();
+        s.config.categories[2].color = "#16A34A".into();
+        s.write_metadata("config", &s.config).unwrap();
+        s.conn
+            .execute("DELETE FROM metadata WHERE key='category-defaults-v1'", [])
+            .unwrap();
+        let mut upgraded = Store::from_connection(s.conn).unwrap();
+        assert_eq!(upgraded.config.categories[0].color, "#16A34A");
+        assert_eq!(upgraded.config.categories[2].color, "#2563EB");
+        upgraded.config.categories[0].color = "#2563EB".into();
+        upgraded.write_metadata("config", &upgraded.config).unwrap();
+        let reopened = Store::from_connection(upgraded.conn).unwrap();
+        assert_eq!(reopened.config.categories[0].color, "#2563EB");
+    }
+    #[test]
+    fn common_defaults_migrate_once_preserving_edits_history_and_deleted_rules() {
+        let mut s = store();
+        s.config = serde_json::from_str(include_str!("../../src/lib/default-config.json")).unwrap();
+        s.config.categories[0].name = "Escritório".into();
+        s.config.categories[0].color = "#123456".into();
+        let mut customized = Configuration::default()
+            .rules
+            .into_iter()
+            .find(|r| r.id == "common-app-code")
+            .unwrap();
+        customized.name = "Meu editor".into();
+        customized.enabled = false;
+        customized.activity_id = Some("research".into());
+        s.config.rules.push(customized);
+        s.write_metadata("config", &s.config).unwrap();
+        s.conn
+            .execute("DELETE FROM metadata WHERE key='common-defaults-v1'", [])
+            .unwrap();
+        s.observe(Some(active("TFLM")), 1000).unwrap();
+        s.observe(Some(active("TFLM")), 2000).unwrap();
+        s.finish(2000).unwrap();
+        let history = serde_json::to_value(s.snapshot(2000).unwrap().events).unwrap();
+
+        let mut upgraded = Store::from_connection(s.conn).unwrap();
+        upgraded.config.validate().unwrap();
+        assert_eq!(
+            upgraded.config.rules.len(),
+            Configuration::default().rules.len()
+        );
+        assert_eq!(upgraded.config.categories[0].name, "Escritório");
+        assert_eq!(upgraded.config.categories[0].color, "#123456");
+        let editor = upgraded
+            .config
+            .rules
+            .iter()
+            .find(|r| r.id == "common-app-code")
+            .unwrap();
+        assert_eq!(editor.name, "Meu editor");
+        assert!(!editor.enabled);
+        assert_eq!(editor.activity_id.as_deref(), Some("research"));
+        assert_eq!(
+            serde_json::to_value(upgraded.snapshot(2000).unwrap().events).unwrap(),
+            history
+        );
+
+        upgraded
+            .config
+            .rules
+            .retain(|r| r.id != "common-app-spotify");
+        upgraded.save_config(upgraded.config.clone(), 2000).unwrap();
+        let reopened = Store::from_connection(upgraded.conn).unwrap();
+        assert!(!reopened
+            .config
+            .rules
+            .iter()
+            .any(|r| r.id == "common-app-spotify"));
+        assert!(
+            !reopened
+                .config
+                .rules
+                .iter()
+                .find(|r| r.id == "common-app-code")
+                .unwrap()
+                .enabled
+        );
+        assert_eq!(
+            serde_json::to_value(reopened.snapshot(2000).unwrap().events).unwrap(),
+            history
+        );
     }
     #[test]
     fn project_context_only_applies_to_eligible_software() {

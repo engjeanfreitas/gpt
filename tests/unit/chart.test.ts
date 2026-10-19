@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { chartBins, chartSeries } from '../../src/lib/chart';
-import { classify, duration, groupEvents } from '../../src/lib/engine';
-import { upgradePalette } from '../../src/lib/colors';
+import { categoryColor, classify, duration, groupEvents } from '../../src/lib/engine';
+import { upgradeCategoryDefaults, upgradePalette } from '../../src/lib/colors';
 import { createDemo } from '../../src/lib/demo';
 import type { TimeEvent } from '../../src/lib/types';
 
@@ -82,11 +82,11 @@ describe('Gráfico por categoria, software e projeto', () => {
       ).toBe(60 * minute);
     }
   });
-  it('usa a cor da categoria específica sem duplicar pais e respeita recortes', () => {
+  it('herda a cor principal sem duplicar pais e respeita recortes', () => {
     const series = chartSeries([events[0]], config, 'activity');
     expect(series).toHaveLength(1);
-    expect(series[0].id).toBe('engineering');
-    expect(series[0].color).toBe(config.categories.find((c) => c.id === 'engineering')!.color);
+    expect(series[0].id).toBe('work');
+    expect(series[0].color).toBe(config.categories.find((c) => c.id === 'work')!.color);
     const clipped = chartBins(series, {
       start: base + 60 * minute,
       end: base + 70 * minute + 1250,
@@ -123,5 +123,39 @@ describe('Gráfico por categoria, software e projeto', () => {
     expect(data.categories[1].color).toBe('#123456');
     expect(data.assignments).toEqual(assignments);
     expect(upgradePalette(data)).toBe(false);
+  });
+  it('propaga a cor da categoria principal para todos os descendentes, inclusive após editar a cor', () => {
+    const data = structuredClone(config);
+    data.categories.push({
+      id: 'calculation',
+      parentId: 'engineering',
+      name: 'Cálculo',
+      color: '#123456',
+    });
+    const deep = { ...events[0], categoryId: 'calculation' };
+    const flatten = (rows: ReturnType<typeof groupEvents>): ReturnType<typeof groupEvents> =>
+      rows.flatMap((row) => [row, ...flatten(row.children)]);
+    for (const color of ['#16A34A', '#9333EA']) {
+      data.categories.find((c) => c.id === 'work')!.color = color;
+      expect(categoryColor('calculation', data.categories)).toBe(color);
+      for (const row of flatten(groupEvents([deep], data, 'activity')))
+        expect(row.color).toBe(color);
+      for (const mode of ['software', 'project'] as const) {
+        const row = groupEvents([deep], data, mode)[0];
+        expect(row.children[0].color).toBe(color);
+      }
+      expect(chartSeries([deep], data, 'activity')[0].color).toBe(color);
+    }
+  });
+  it('ajusta apenas as cores padrão antigas de Trabalho e Estudo', () => {
+    const data = structuredClone(config);
+    data.categories.find((c) => c.id === 'work')!.color = '#2563EB';
+    data.categories.find((c) => c.id === 'study')!.color = '#16A34A';
+    expect(upgradeCategoryDefaults(data)).toBe(true);
+    expect(data.categories.find((c) => c.id === 'work')!.color).toBe('#16A34A');
+    expect(data.categories.find((c) => c.id === 'study')!.color).toBe('#2563EB');
+    expect(upgradeCategoryDefaults(data)).toBe(false);
+    data.categories.find((c) => c.id === 'work')!.color = '#123456';
+    expect(upgradeCategoryDefaults(data)).toBe(false);
   });
 });

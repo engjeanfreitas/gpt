@@ -14,6 +14,22 @@ export function upgradePalette(config: Configuration): boolean {
   }
   return changed;
 }
+/** Run once per data store so later user choices are never reset on startup. */
+export function upgradeCategoryDefaults(config: Configuration): boolean {
+  let changed = false;
+  for (const replacement of palette.categoryDefaults) {
+    const category = config.categories.find((c) => c.id === replacement.id);
+    if (
+      category &&
+      !category.parentId &&
+      category.color.toLowerCase() === replacement.from.toLowerCase()
+    ) {
+      category.color = replacement.to;
+      changed = true;
+    }
+  }
+  return changed;
+}
 export function softwareColor(app: string, config: Configuration): string {
   const index = config.softwares.findIndex((s) => s.executable.toLowerCase() === app.toLowerCase());
   if (index >= 0) return COLORS[index % COLORS.length];

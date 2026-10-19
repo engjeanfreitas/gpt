@@ -70,13 +70,114 @@ pub struct Configuration {
     pub assignments: HashMap<String, serde_json::Value>,
     pub settings: Settings,
 }
+#[derive(Deserialize)]
+struct CommonDefaults {
+    categories: Vec<Category>,
+    activities: Vec<Activity>,
+    softwares: Vec<Software>,
+    rules: Vec<Rule>,
+}
 impl Default for Configuration {
     fn default() -> Self {
-        serde_json::from_str(include_str!("../../src/lib/default-config.json"))
-            .expect("valid embedded defaults")
+        let mut config: Self =
+            serde_json::from_str(include_str!("../../src/lib/default-config.json"))
+                .expect("valid embedded defaults");
+        config.install_common_defaults();
+        config
     }
 }
 impl Configuration {
+    pub fn install_common_defaults(&mut self) -> bool {
+        let base: CommonDefaults =
+            serde_json::from_str(include_str!("../../src/lib/default-config.json"))
+                .expect("valid embedded defaults");
+        let catalog: CommonDefaults =
+            serde_json::from_str(include_str!("../../src/lib/common-defaults.json"))
+                .expect("valid common defaults");
+        let before = (
+            self.categories.len(),
+            self.activities.len(),
+            self.softwares.len(),
+            self.rules.len(),
+        );
+        let seeds: Vec<_> = base
+            .categories
+            .into_iter()
+            .chain(catalog.categories.iter().cloned())
+            .collect();
+        for category in catalog.categories {
+            self.ensure_default_category(&category.id, &seeds);
+        }
+        for activity in catalog.activities {
+            if !self.activities.iter().any(|a| a.id == activity.id) {
+                if let Some(id) = &activity.category_id {
+                    self.ensure_default_category(id, &seeds);
+                }
+                self.activities.push(activity);
+            }
+        }
+        for software in catalog.softwares {
+            if !self
+                .softwares
+                .iter()
+                .any(|s| s.executable.eq_ignore_ascii_case(&software.executable))
+            {
+                if let Some(id) = &software.category_id {
+                    self.ensure_default_category(id, &seeds);
+                }
+                self.softwares.push(software);
+            }
+        }
+        for rule in catalog.rules {
+            if !self.rules.iter().any(|r| r.id == rule.id) {
+                self.rules.push(rule);
+            }
+        }
+        before
+            != (
+                self.categories.len(),
+                self.activities.len(),
+                self.softwares.len(),
+                self.rules.len(),
+            )
+    }
+    fn ensure_default_category(&mut self, id: &str, seeds: &[Category]) {
+        if self.categories.iter().any(|c| c.id == id) {
+            return;
+        }
+        let category = seeds
+            .iter()
+            .find(|c| c.id == id)
+            .expect("valid default category")
+            .clone();
+        if let Some(parent) = &category.parent_id {
+            self.ensure_default_category(parent, seeds);
+        }
+        self.categories.push(category);
+    }
+    pub fn upgrade_category_defaults(&mut self) -> bool {
+        let palette: serde_json::Value =
+            serde_json::from_str(include_str!("../../src/lib/palette.json"))
+                .expect("valid shared palette");
+        let mut changed = false;
+        for replacement in palette["categoryDefaults"]
+            .as_array()
+            .expect("valid category defaults")
+        {
+            for category in &mut self.categories {
+                if category.id == replacement["id"].as_str().unwrap_or_default()
+                    && category.parent_id.is_none()
+                    && category
+                        .color
+                        .eq_ignore_ascii_case(replacement["from"].as_str().unwrap_or_default())
+                {
+                    category.color = replacement["to"].as_str().expect("valid color").to_string();
+                    changed = true;
+                }
+            }
+        }
+        changed
+    }
     pub fn upgrade_palette(&mut self) -> bool {
         let palette: serde_json::Value =
             serde_json::from_str(include_str!("../../src/lib/palette.json"))
@@ -165,7 +266,7 @@ impl Configuration {
                     && r.title_contains.trim().is_empty()
                     && r.domain.trim().is_empty())
                 || (r.activity_id.is_none() && r.project_id.is_none())
-                || !(0..=1000).contains(&r.priority)
+                || !(-1000..=1000).contains(&r.priority)
                 || r.project_id
                     .as_deref()
                     .is_some_and(|id| !projects.contains(id))

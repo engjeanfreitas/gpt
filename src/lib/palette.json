@@ -1,5 +1,9 @@
 {
   "colors": ["#EA580C", "#2563EB", "#16A34A", "#9333EA", "#CA8A04", "#0891B2", "#DB2777"],
+  "categoryDefaults": [
+    { "id": "work", "from": "#2563EB", "to": "#16A34A" },
+    { "id": "study", "from": "#16A34A", "to": "#2563EB" }
+  ],
   "legacy": {
     "#c87957": "#EA580C",
     "#7e9274": "#2563EB",

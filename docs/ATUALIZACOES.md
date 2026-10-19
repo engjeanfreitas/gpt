@@ -2,7 +2,7 @@
 
 ## Uso
 
-O botão está em Preferências → Atualizações, a partir da versão 0.1.3. A consulta é manual, sem verificação ou download periódico em segundo plano. O aplicativo continua funcionando sem internet. É necessário instalar 0.1.3 manualmente uma vez para adicionar esse recurso às versões anteriores.
+O botão está em Preferências → Atualizações, a partir da versão 0.1.3. A consulta é manual, sem verificação ou download periódico em segundo plano. O aplicativo continua funcionando sem internet. Para adicionar esse recurso às versões anteriores, instale manualmente uma vez a versão mais recente (0.1.3 ou posterior).
 
 O fluxo consulta a versão disponível, mostra as notas, pede confirmação, baixa o instalador, valida a assinatura com a chave pública embutida e verifica a versão assinada. Antes de iniciar o NSIS, finaliza o intervalo pendente e cria backup SQLite em `backups/antes-atualizacao-<versão>-<instante>.sqlite`. Novas observações são suspensas após o backup e o instalador reabre o Tempo ao terminar. Falhas anteriores à instalação mantêm a instalação atual; é possível verificar novamente e tentar outra vez.
 

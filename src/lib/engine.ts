@@ -103,6 +103,9 @@ export function categoryPath(id: string | null, categories: Category[]): Categor
 export function isInCategory(id: string | null, parentId: string, categories: Category[]): boolean {
   return categoryPath(id, categories).some((c) => c.id === parentId);
 }
+export function categoryColor(id: string | null, categories: Category[]): string {
+  return categoryPath(id, categories)[0]?.color ?? '#475569';
+}
 export function groupEvents(
   events: ClassifiedEvent[],
   config: Configuration,
@@ -127,8 +130,7 @@ export function groupEvents(
   };
   for (const e of events.filter((e) => e.kind === 'active')) {
     const categories = categoryPath(e.categoryId, config.categories);
-    const color =
-      mode === 'software' ? softwareColor(e.app, config) : (categories.at(-1)?.color ?? '#475569');
+    const color = categories[0]?.color ?? '#475569';
     const ignored = [e.softwareName, e.app, e.app.replace(/\.exe$/i, '')].map(lower);
     const titleParts = e.title
       .split(/\s+[-–—|:>]\s+|\\/)
@@ -143,7 +145,7 @@ export function groupEvents(
     }));
     if (mode === 'activity') {
       const path: { id: string; name: string; color: string; subtitle: string }[] = categories.map(
-        (c) => ({ ...c, subtitle: 'Categoria' }),
+        (c) => ({ ...c, color, subtitle: 'Categoria' }),
       );
       if (!path.length)
         path.push({ id: 'uncategorized', name: 'Sem classificação', color, subtitle: 'Categoria' });
@@ -159,7 +161,12 @@ export function groupEvents(
     } else if (mode === 'software') {
       insert(
         [
-          { id: `s:${e.app}`, name: e.softwareName, color, subtitle: e.app },
+          {
+            id: `s:${e.app}`,
+            name: e.softwareName,
+            color: softwareColor(e.app, config),
+            subtitle: e.app,
+          },
           {
             id: `a:${e.activityId ?? 'none'}:p:${e.projectId ?? 'none'}`,
             name: e.activityName,

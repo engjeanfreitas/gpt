@@ -1,4 +1,4 @@
-import { categoryPath, dayStart, groupEvents } from './engine';
+import { dayStart, groupEvents } from './engine';
 import type { ClassifiedEvent, Configuration, DateRange, GroupMode, GroupRow } from './types';
 
 export interface ChartSeries {
@@ -20,37 +20,14 @@ export function chartSeries(
   mode: GroupMode,
   rows?: GroupRow[],
 ): ChartSeries[] {
-  let series: ChartSeries[];
-  if (mode === 'activity') {
-    const valid = new Set(config.categories.map((c) => c.id));
-    // Category parents contain descendants in the tree. Here each event belongs
-    // only to its specific category, so stacked heights never count it twice.
-    const categories = [
-      ...config.categories.map((c) => ({
-        id: c.id,
-        name: categoryPath(c.id, config.categories)
-          .map((p) => p.name)
-          .join(' › '),
-        color: c.color,
-      })),
-      { id: 'uncategorized', name: 'Sem classificação', color: '#475569' },
-    ];
-    series = categories.map((category) => ({
-      ...category,
-      events: events.filter(
-        (e) =>
-          e.kind === 'active' &&
-          (valid.has(e.categoryId ?? '') ? e.categoryId : 'uncategorized') === category.id,
-      ),
-    }));
-  } else {
-    series = (rows ?? groupEvents(events, config, mode)).map((row) => ({
-      id: row.id,
-      name: row.name,
-      color: row.color,
-      events: row.events,
-    }));
-  }
+  // Root rows partition active time. Descendant rows include the same events
+  // again, so using them as extra series would double-count the category total.
+  const series: ChartSeries[] = (rows ?? groupEvents(events, config, mode)).map((row) => ({
+    id: row.id,
+    name: row.name,
+    color: row.color,
+    events: row.events,
+  }));
   series.push(
     {
       id: 'pause',

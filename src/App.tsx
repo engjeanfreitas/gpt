@@ -29,6 +29,7 @@ import { EventEditor, PauseEditor, ProjectEditor, RuleEditor } from './component
 import { Settings } from './components/Settings';
 import { AppIcon, Empty, Field, Modal, Toast } from './components/ui';
 import {
+  categoryColor,
   categoryPath,
   classify,
   clipEvents,
@@ -926,6 +927,26 @@ function Rules({
   onEdit: (r: Rule) => void;
   onChange: (c: Configuration) => void;
 }) {
+  const [search, setSearch] = useState('');
+  const query = search.trim().toLocaleLowerCase('pt-BR');
+  const visibleRules = [...config.rules]
+    .filter((rule) => {
+      const activity = config.activities.find((a) => a.id === rule.activityId);
+      return [
+        rule.name,
+        rule.app,
+        rule.titleContains,
+        rule.domain,
+        activity?.name,
+        ...categoryPath(activity?.categoryId ?? null, config.categories).map((c) => c.name),
+        config.projects.find((p) => p.id === rule.projectId)?.name,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLocaleLowerCase('pt-BR')
+        .includes(query);
+    })
+    .sort((a, b) => b.priority - a.priority);
   return (
     <>
       <div className="section-heading">
@@ -936,6 +957,21 @@ function Rules({
         </button>
       </div>
       <section className="card rules-card">
+        <div className="card-heading">
+          <div>
+            <h2>Regras automáticas</h2>
+            <p>Os padrões têm prioridade baixa. Você pode editar ou desativar qualquer regra.</p>
+          </div>
+          <label className="search-field">
+            <Search size={16} />
+            <input
+              aria-label="Buscar regras"
+              placeholder="Software, atividade ou categoria…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </label>
+        </div>
         <div className="rules-table">
           <div className="rules-table-head">
             <span>Regra e condições</span>
@@ -944,54 +980,58 @@ function Rules({
             <span>Ativa</span>
             <span />
           </div>
-          {[...config.rules]
-            .sort((a, b) => b.priority - a.priority)
-            .map((rule) => (
-              <div className="rule-row" key={rule.id}>
-                <button className="rule-name" onClick={() => onEdit(rule)}>
-                  <strong>{rule.name}</strong>
+          {visibleRules.map((rule) => (
+            <div className="rule-row" key={rule.id}>
+              <button className="rule-name" onClick={() => onEdit(rule)}>
+                <strong>{rule.name}</strong>
+                <small>
+                  {[
+                    rule.app,
+                    rule.titleContains && `Título contém “${rule.titleContains}”`,
+                    rule.domain,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </small>
+              </button>
+              <div className="rule-target">
+                <span>
+                  {config.activities.find((a) => a.id === rule.activityId)?.name ||
+                    'Manter atividade'}
+                </span>
+                {rule.projectId && (
                   <small>
-                    {[
-                      rule.app,
-                      rule.titleContains && `Título contém “${rule.titleContains}”`,
-                      rule.domain,
-                    ]
-                      .filter(Boolean)
-                      .join(' · ')}
+                    <FolderKanban size={12} />
+                    {config.projects.find((p) => p.id === rule.projectId)?.name}
                   </small>
-                </button>
-                <div className="rule-target">
-                  <span>
-                    {config.activities.find((a) => a.id === rule.activityId)?.name ||
-                      'Manter atividade'}
-                  </span>
-                  {rule.projectId && (
-                    <small>
-                      <FolderKanban size={12} />
-                      {config.projects.find((p) => p.id === rule.projectId)?.name}
-                    </small>
-                  )}
-                </div>
-                <span className="priority-pill">{rule.priority}</span>
-                <input
-                  type="checkbox"
-                  aria-label={`Ativar regra ${rule.name}`}
-                  checked={rule.enabled}
-                  onChange={(e) =>
-                    onChange({
-                      ...config,
-                      rules: config.rules.map((r) =>
-                        r.id === rule.id ? { ...r, enabled: e.target.checked } : r,
-                      ),
-                    })
-                  }
-                />
-                <button className="text-link" onClick={() => onEdit(rule)}>
-                  Editar
-                </button>
+                )}
               </div>
-            ))}
+              <span className="priority-pill">{rule.priority}</span>
+              <input
+                type="checkbox"
+                aria-label={`Ativar regra ${rule.name}`}
+                checked={rule.enabled}
+                onChange={(e) =>
+                  onChange({
+                    ...config,
+                    rules: config.rules.map((r) =>
+                      r.id === rule.id ? { ...r, enabled: e.target.checked } : r,
+                    ),
+                  })
+                }
+              />
+              <button className="text-link" onClick={() => onEdit(rule)}>
+                Editar
+              </button>
+            </div>
+          ))}
         </div>
+        {!!config.rules.length && !visibleRules.length && (
+          <Empty
+            title="Nenhuma regra encontrada"
+            description="Busque outro software, atividade ou categoria."
+          />
+        )}
         {!config.rules.length && (
           <Empty
             title="Sua organização começa com uma regra"
@@ -1028,7 +1068,7 @@ function Rules({
             <span key={a.id}>
               <i
                 style={{
-                  background: config.categories.find((c) => c.id === a.categoryId)?.color ?? '#999',
+                  background: categoryColor(a.categoryId, config.categories),
                 }}
               />
               {a.name}

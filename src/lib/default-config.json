@@ -3,7 +3,7 @@
     {
       "id": "work",
       "name": "Trabalho",
-      "color": "#2563EB",
+      "color": "#16A34A",
       "parentId": null
     },
     {
@@ -15,7 +15,7 @@
     {
       "id": "study",
       "name": "Estudo",
-      "color": "#16A34A",
+      "color": "#2563EB",
       "parentId": null
     },
     {

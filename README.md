@@ -2,11 +2,13 @@
 
 Rastreador pessoal de tempo para Windows. Organize o histórico em árvore e explore os mesmos intervalos por atividade, software ou projeto.
 
-**Download da versão de teste:** [Instalador Windows x64](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.3/Tempo-0.1.3-windows-x64-setup.exe) · [ZIP portátil](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.3/Tempo-0.1.3-windows-x64-portable.zip) · [Página da versão](https://github.com/engjeanfreitas/gpt/releases/tag/v0.1.3).
+**Download da versão de teste:** [Instalador Windows x64](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.4/Tempo-0.1.4-windows-x64-setup.exe) · [ZIP portátil](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.4/Tempo-0.1.4-windows-x64-portable.zip) · [Página da versão](https://github.com/engjeanfreitas/gpt/releases/tag/v0.1.4).
 
-Esta distribuição não tem assinatura de código e ainda requer os testes de captura e áudio em um Windows real. As [notas da versão](docs/RELEASE-NOTES-v0.1.3.md) descrevem recursos e limites.
+Esta distribuição não tem assinatura de código e ainda requer os testes de captura e áudio em um Windows real. As [notas da versão](docs/RELEASE-NOTES-v0.1.4.md) descrevem recursos e limites.
 
 Esta versão inclui dashboard com barras verticais empilhadas nas mesmas cores da árvore e do agrupamento selecionado, timeline, projetos com estimativa de horas, regras reprocessáveis, atribuições manuais, nomes amigáveis, categorias hierárquicas, exportação CSV e pausa configurável com contador, notificação e alarme.
+
+A versão 0.1.4 acrescenta 114 regras padrão para atividades comuns, inspiradas no ActivityWatch, com busca e edição. Trabalho começa em verde, e atividades e subcategorias herdam a cor da categoria principal na árvore e no gráfico por atividade. Consulte o [catálogo de regras padrão](docs/REGRAS-PADRAO.md).
 
 ![Dashboard com dados de demonstração](docs/dashboard.png)
 
@@ -91,7 +93,7 @@ O botão de exclusão apaga o período selecionado, independentemente dos filtro
 
 ## Atualizar o aplicativo
 
-Encerre o Tempo pela bandeja e execute o instalador da nova versão, com o mesmo usuário e local de instalação. Não é preciso desinstalar manualmente; histórico e configurações ficam no diretório de dados separado. A versão 0.1.3 mantém o mesmo formato do banco. Se optar por desinstalar, não marque a exclusão dos dados do aplicativo. A distribuição portátil é atualizada substituindo os arquivos extraídos com o programa encerrado.
+Encerre o Tempo pela bandeja e execute o instalador da nova versão, com o mesmo usuário e local de instalação. Não é preciso desinstalar manualmente; histórico e configurações ficam no diretório de dados separado. A versão 0.1.4 mantém o mesmo formato do banco. Se optar por desinstalar, não marque a exclusão dos dados do aplicativo. A distribuição portátil é atualizada substituindo os arquivos extraídos com o programa encerrado.
 
 A partir da 0.1.3, abra **Preferências → Atualizações → Verificar atualizações**. Quando houver uma nova versão assinada, escolha **Baixar e instalar**, confirme e acompanhe o progresso. O Tempo valida a assinatura, salva um backup, abre o instalador e é reaberto ao concluir. A consulta só ocorre ao clicar; não há download periódico em segundo plano. Versões anteriores precisam de uma atualização manual inicial para adicionar o botão. Consulte o [guia de atualizações](docs/ATUALIZACOES.md).
 
