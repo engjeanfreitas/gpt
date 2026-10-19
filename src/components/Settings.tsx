@@ -5,6 +5,7 @@ import { COLORS } from '../lib/defaults';
 import { Field, Modal } from './ui';
 import { playAlarm, unlockAudio } from '../lib/alarm';
 import * as service from '../lib/service';
+import { Updates } from './Updates';
 import type { Category, Configuration, Settings as Preferences } from '../lib/types';
 
 export function Settings({
@@ -253,6 +254,7 @@ export function Settings({
         </div>
       </form>
       <aside className="settings-aside">
+        <Updates />
         <section className="card settings-section">
           <div className="card-heading">
             <div>

@@ -1,0 +1,4 @@
+e641f1d7c5968f4d8e49c40bf04fdc14a67c094b16fd2e8ec700cdc8b88b7c52  Tempo-0.1.3-windows-x64-setup.exe
+8ea330a9b02296b03f41be16e8d9f9f118c6df8a5b929e6a4760716a9b87edb9  Tempo-0.1.3-windows-x64-setup.exe.sig
+6fc6c4fd495ecb7330ee50a3c290cb58700951591cda698ee7437263242b7256  Tempo-0.1.3-windows-x64-portable.zip
+23e1fc1a7991dd1a91c2b253b87d66d45f1031b859d78f309dbc684ed2a9e1d9  latest.json

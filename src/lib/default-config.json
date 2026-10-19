@@ -3,25 +3,25 @@
     {
       "id": "work",
       "name": "Trabalho",
-      "color": "#7e9274",
+      "color": "#2563EB",
       "parentId": null
     },
     {
       "id": "engineering",
       "name": "Engenharia",
-      "color": "#c87957",
+      "color": "#EA580C",
       "parentId": "work"
     },
     {
       "id": "study",
       "name": "Estudo",
-      "color": "#778db5",
+      "color": "#16A34A",
       "parentId": null
     },
     {
       "id": "personal",
       "name": "Pessoal",
-      "color": "#b18eb8",
+      "color": "#9333EA",
       "parentId": null
     }
   ],

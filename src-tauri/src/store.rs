@@ -43,9 +43,10 @@ impl Store {
           CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, start INTEGER NOT NULL, end INTEGER NOT NULL, app TEXT NOT NULL, title TEXT NOT NULL, domain TEXT, project_id TEXT, kind TEXT NOT NULL, CHECK(end >= start));
           CREATE INDEX IF NOT EXISTS events_start ON events(start);
           CREATE INDEX IF NOT EXISTS events_project ON events(project_id, start);").map_err(db_error)?;
-        let config = Self::read_metadata(&conn, "config")?.unwrap_or_default();
+        let mut config: Configuration = Self::read_metadata(&conn, "config")?.unwrap_or_default();
+        let upgraded_palette = config.upgrade_palette();
         let runtime = Self::read_metadata(&conn, "runtime")?.unwrap_or_default();
-        Ok(Self {
+        let store = Self {
             conn,
             config,
             runtime,
@@ -55,7 +56,11 @@ impl Store {
             capturing: false,
             tracking_status: TrackingStatus::Unknown,
             last_error: None,
-        })
+        };
+        if upgraded_palette {
+            store.write_metadata("config", &store.config)?;
+        }
+        Ok(store)
     }
     fn read_metadata<T: serde::de::DeserializeOwned>(
         conn: &Connection,
@@ -697,6 +702,26 @@ mod tests {
     #[test]
     fn default_config_is_valid() {
         Configuration::default().validate().unwrap();
+    }
+    #[test]
+    fn palette_upgrade_preserves_custom_colors_and_history() {
+        let mut s = store();
+        s.config.categories[0].color = "#7e9274".into();
+        s.config.categories[1].color = "#123456".into();
+        s.config.categories[0].name = "Minha categoria".into();
+        s.write_metadata("config", &s.config).unwrap();
+        s.observe(Some(active("TFLM")), 1000).unwrap();
+        s.observe(Some(active("TFLM")), 2000).unwrap();
+        s.finish(2000).unwrap();
+        let upgraded = Store::from_connection(s.conn).unwrap();
+        assert_eq!(upgraded.config.categories[0].color, "#2563EB");
+        assert_eq!(upgraded.config.categories[0].name, "Minha categoria");
+        assert_eq!(upgraded.config.categories[1].color, "#123456");
+        assert_eq!(upgraded.snapshot(2000).unwrap().events[0].end, 2000);
+        let stored: Configuration = Store::read_metadata(&upgraded.conn, "config")
+            .unwrap()
+            .unwrap();
+        assert_eq!(stored.categories[0].color, "#2563EB");
     }
     #[test]
     fn project_context_only_applies_to_eligible_software() {

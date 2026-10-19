@@ -77,6 +77,24 @@ impl Default for Configuration {
     }
 }
 impl Configuration {
+    pub fn upgrade_palette(&mut self) -> bool {
+        let palette: serde_json::Value =
+            serde_json::from_str(include_str!("../../src/lib/palette.json"))
+                .expect("valid shared palette");
+        let mut changed = false;
+        for color in self
+            .categories
+            .iter_mut()
+            .map(|c| &mut c.color)
+            .chain(self.projects.iter_mut().map(|p| &mut p.color))
+        {
+            if let Some(replacement) = palette["legacy"][color.to_lowercase()].as_str() {
+                *color = replacement.to_string();
+                changed = true;
+            }
+        }
+        changed
+    }
     pub fn validate(&self) -> Result<(), String> {
         if !(60..=3600).contains(&self.settings.idle_seconds)
             || !(1..=3650).contains(&self.settings.retention_days)

@@ -31,9 +31,11 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - run: npm ci
       - run: cargo test --manifest-path src-tauri/Cargo.toml --lib --locked
-      - run: npm run desktop:build
+      - run: cargo test --manifest-path src-tauri/Cargo.toml --test update_signature --locked
+      - name: Build validation installer without release signing secrets
+        run: npm run desktop:build -- --config src-tauri/tauri.checks.conf.json
       - uses: actions/upload-artifact@v4
         with:
-          name: tempo-windows-installer
+          name: tempo-windows-installer-validation-only
           path: src-tauri/target/release/bundle/nsis/*-setup.exe
           if-no-files-found: error

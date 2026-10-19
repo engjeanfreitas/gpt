@@ -2,11 +2,11 @@
 
 Rastreador pessoal de tempo para Windows. Organize o histórico em árvore e explore os mesmos intervalos por atividade, software ou projeto.
 
-**Download da versão de teste:** [Instalador Windows x64](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.2/Tempo-0.1.2-windows-x64-setup.exe) · [ZIP portátil](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.2/Tempo-0.1.2-windows-x64-portable.zip) · [Página da versão](https://github.com/engjeanfreitas/gpt/releases/tag/v0.1.2).
+**Download da versão de teste:** [Instalador Windows x64](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.3/Tempo-0.1.3-windows-x64-setup.exe) · [ZIP portátil](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.3/Tempo-0.1.3-windows-x64-portable.zip) · [Página da versão](https://github.com/engjeanfreitas/gpt/releases/tag/v0.1.3).
 
-Esta distribuição não tem assinatura de código e ainda requer os testes de captura e áudio em um Windows real. As [notas da versão](docs/RELEASE-NOTES-v0.1.2.md) descrevem recursos e limites.
+Esta distribuição não tem assinatura de código e ainda requer os testes de captura e áudio em um Windows real. As [notas da versão](docs/RELEASE-NOTES-v0.1.3.md) descrevem recursos e limites.
 
-Esta primeira versão inclui dashboard, timeline, projetos com estimativa de horas, regras reprocessáveis, atribuições manuais, nomes amigáveis, categorias hierárquicas, exportação CSV e pausa configurável com contador, notificação e alarme.
+Esta versão inclui dashboard com barras verticais empilhadas nas mesmas cores da árvore e do agrupamento selecionado, timeline, projetos com estimativa de horas, regras reprocessáveis, atribuições manuais, nomes amigáveis, categorias hierárquicas, exportação CSV e pausa configurável com contador, notificação e alarme.
 
 ![Dashboard com dados de demonstração](docs/dashboard.png)
 
@@ -91,9 +91,11 @@ O botão de exclusão apaga o período selecionado, independentemente dos filtro
 
 ## Atualizar o aplicativo
 
-Encerre o Tempo pela bandeja e execute o instalador da nova versão, com o mesmo usuário e local de instalação. Não é preciso desinstalar manualmente; histórico e configurações ficam no diretório de dados separado. A versão 0.1.2 mantém o mesmo formato do banco. Se optar por desinstalar, não marque a exclusão dos dados do aplicativo. A distribuição portátil é atualizada substituindo os arquivos extraídos com o programa encerrado.
+Encerre o Tempo pela bandeja e execute o instalador da nova versão, com o mesmo usuário e local de instalação. Não é preciso desinstalar manualmente; histórico e configurações ficam no diretório de dados separado. A versão 0.1.3 mantém o mesmo formato do banco. Se optar por desinstalar, não marque a exclusão dos dados do aplicativo. A distribuição portátil é atualizada substituindo os arquivos extraídos com o programa encerrado.
 
-Regras, categorias, nomes, projetos e preferências têm efeito imediato, sem reinstalação. Mudanças no código exigem uma nova versão instalada; o Tempo ainda não possui atualizador automático.
+A partir da 0.1.3, abra **Preferências → Atualizações → Verificar atualizações**. Quando houver uma nova versão assinada, escolha **Baixar e instalar**, confirme e acompanhe o progresso. O Tempo valida a assinatura, salva um backup, abre o instalador e é reaberto ao concluir. A consulta só ocorre ao clicar; não há download periódico em segundo plano. Versões anteriores precisam de uma atualização manual inicial para adicionar o botão. Consulte o [guia de atualizações](docs/ATUALIZACOES.md).
+
+Regras, categorias, nomes, projetos e preferências têm efeito imediato, sem reinstalação. A cópia portátil pode usar o botão para instalar a cópia padrão; para permanecer portátil, atualize os arquivos extraídos manualmente.
 
 ## Validação
 

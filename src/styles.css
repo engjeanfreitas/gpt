@@ -322,6 +322,34 @@ input[type='number'] {
   background: #c29b55;
   box-shadow: 0 0 0 3px #c29b5514;
 }
+.update-settings .card-heading {
+  padding: 0 0 14px;
+}
+.update-settings p {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #75856b;
+}
+.update-available {
+  margin-top: 18px;
+}
+.update-available > strong {
+  font-size: 12px;
+  color: #647851;
+}
+.update-settings .update-notes {
+  white-space: pre-wrap;
+  max-height: 180px;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+.update-progress progress {
+  width: 100%;
+  accent-color: #758b60;
+}
+.update-settings .update-error {
+  color: #a44737;
+}
 .topbar-separator {
   width: 1px;
   height: 14px;
@@ -713,6 +741,7 @@ h1 {
 }
 .chart-legend {
   display: flex;
+  flex-wrap: wrap;
   gap: 17px;
   padding: 7px 23px 0;
   color: #969d8a;
@@ -723,14 +752,19 @@ h1 {
   display: flex;
   gap: 6px;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .chart-legend i {
+  flex-shrink: 0;
   width: 7px;
   height: 7px;
   border-radius: 2px;
 }
 .chart-legend .legend-note {
-  margin-left: auto;
+  flex-basis: 100%;
+  margin-left: 0;
   font-size: 8px;
   color: #abb09f;
   gap: 4px;

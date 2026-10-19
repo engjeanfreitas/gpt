@@ -1,5 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import { createDemo } from './demo';
+import { upgradePalette } from './colors';
 import type { Configuration, Snapshot } from './types';
 
 export const isDesktop = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
@@ -13,6 +14,13 @@ function demo(): Snapshot {
       /* A damaged demo can be reset. */
     }
     if (!memory?.config?.settings) memory = createDemo();
+    if (upgradePalette(memory.config)) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(memory));
+      } catch {
+        /* Keep the new palette in memory if browser storage is full. */
+      }
+    }
   }
   return memory;
 }
@@ -86,6 +94,24 @@ export async function setAutostart(enabled: boolean): Promise<void> {
 }
 export async function getAutostart(): Promise<boolean> {
   return isDesktop ? invoke('get_autostart') : false;
+}
+export interface UpdateInfo {
+  currentVersion: string;
+  availableVersion: string | null;
+  notes: string | null;
+}
+export interface UpdateProgress {
+  phase: 'downloading' | 'installing';
+  downloaded: number;
+  total: number | null;
+}
+export async function checkForUpdates(): Promise<UpdateInfo> {
+  if (!isDesktop) throw new Error('Abra o aplicativo Windows para verificar atualizações.');
+  return invoke('check_for_updates');
+}
+export async function installUpdate(): Promise<void> {
+  if (!isDesktop) throw new Error('Abra o aplicativo Windows para atualizar.');
+  return invoke('install_update');
 }
 export async function testAlarm(): Promise<void> {
   if (isDesktop) return invoke('test_alarm');

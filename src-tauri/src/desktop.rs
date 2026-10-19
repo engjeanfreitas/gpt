@@ -2,7 +2,14 @@ use crate::{
     model::*,
     store::{now_ms, Store},
 };
-use std::{path::PathBuf, sync::Mutex, time::Duration};
+use std::{
+    path::PathBuf,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Mutex,
+    },
+    time::Duration,
+};
 use tauri::{
     menu::{Menu, MenuItem},
     tray::TrayIconBuilder,
@@ -11,17 +18,22 @@ use tauri::{
 use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_notification::NotificationExt;
 
-struct State {
-    store: Mutex<Store>,
-    data_dir: PathBuf,
+pub(crate) struct State {
+    pub(crate) store: Mutex<Store>,
+    pub(crate) data_dir: PathBuf,
+    pub(crate) updating: AtomicBool,
 }
-fn locked<'a>(
+pub(crate) fn locked<'a>(
     state: &'a tauri::State<'_, State>,
 ) -> Result<std::sync::MutexGuard<'a, Store>, String> {
-    state
+    let store = state
         .store
         .lock()
-        .map_err(|_| "Não foi possível acessar o armazenamento.".into())
+        .map_err(|_| "Não foi possível acessar o armazenamento.")?;
+    if state.updating.load(Ordering::SeqCst) {
+        return Err("A atualização está sendo instalada. Aguarde o reinício do Tempo.".into());
+    }
+    Ok(store)
 }
 
 #[tauri::command]
@@ -119,6 +131,8 @@ pub fn run() {
                 .build(),
         )
         .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .manage(crate::updates::UpdateState::default())
         .invoke_handler(tauri::generate_handler![
             get_snapshot,
             save_config,
@@ -130,7 +144,9 @@ pub fn run() {
             get_autostart,
             set_autostart,
             create_backup,
-            test_alarm
+            test_alarm,
+            crate::updates::check_for_updates,
+            crate::updates::install_update
         ])
         .setup(|app| {
             let data_dir = app.path().app_local_data_dir()?;
@@ -141,6 +157,7 @@ pub fn run() {
             app.manage(State {
                 store: Mutex::new(store),
                 data_dir,
+                updating: AtomicBool::new(false),
             });
             let open = MenuItem::with_id(app, "open", "Abrir dashboard", true, None::<&str>)?;
             let pause5 =
@@ -203,6 +220,11 @@ pub fn run() {
                     let mut alarm = None;
                     let mut tooltip = String::new();
                     if let Ok(mut store) = state.store.lock() {
+                        if state.updating.load(Ordering::SeqCst) {
+                            drop(store);
+                            std::thread::sleep(Duration::from_secs(1));
+                            continue;
+                        }
                         match store.check_alarm(now) {
                             Ok(true) => alarm = Some(store.config.settings.clone()),
                             Err(e) => store.last_error = Some(e),

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
   ArrowDownRight,
   ArrowRight,
@@ -16,6 +16,7 @@ import {
 import { AppIcon, Empty } from './ui';
 import { dayStart, duration, formatClock, formatDuration, groupEvents } from '../lib/engine';
 import { buildTimeline } from '../lib/timeline';
+import { chartBins, chartSeries, type ChartSeries } from '../lib/chart';
 import type { ClassifiedEvent, Configuration, DateRange, GroupMode, GroupRow } from '../lib/types';
 
 interface Props {
@@ -28,54 +29,32 @@ interface Props {
   onProject: (id: string) => void;
   onNewProject: () => void;
 }
-export function ActivityChart({ events, range }: { events: ClassifiedEvent[]; range: DateRange }) {
+export function ActivityChart({
+  series,
+  range,
+  mode,
+}: {
+  series: ChartSeries[];
+  range: DateRange;
+  mode: GroupMode;
+}) {
+  const id = useId().replaceAll(':', '');
+  const bins = chartBins(series, range);
   const daily = range.end - range.start > 26 * 3600_000;
-  const bins: { start: number; end: number; label: string; active: number; rest: number }[] = [];
-  if (daily) {
-    let date = new Date(range.start);
-    while (date.getTime() < range.end && bins.length < 366) {
-      const start = date.getTime();
-      const next = new Date(date);
-      next.setDate(next.getDate() + 1);
-      bins.push({
-        start,
-        end: next.getTime(),
-        label: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
-        active: 0,
-        rest: 0,
-      });
-      date = next;
-    }
-  } else {
-    for (let start = range.start; start < range.end; start += 3600_000) {
-      const date = new Date(start);
-      bins.push({
-        start,
-        end: Math.min(start + 3600_000, range.end),
-        label: `${date.getHours()}h`,
-        active: 0,
-        rest: 0,
-      });
-    }
-  }
-  for (const bin of bins)
-    for (const event of events) {
-      const ms = Math.max(0, Math.min(bin.end, event.end) - Math.max(bin.start, event.start));
-      if (event.kind === 'active') bin.active += ms;
-      else if (event.kind !== 'unknown') bin.rest += ms;
-    }
-  const max = Math.max(daily ? 3600_000 : 1800_000, ...bins.map((b) => b.active + b.rest));
-  const width = 760;
-  const height = 204;
+  const totals = bins.map((bin) =>
+    bin.segments.reduce((sum, segment) => sum + segment.duration, 0),
+  );
+  const max = Math.max(daily ? 3600_000 : 1800_000, ...totals);
   const graphHeight = 155;
   const step = 700 / Math.max(1, bins.length);
   const barWidth = Math.max(2, Math.min(32, step * 0.55));
+  const grouping = mode === 'activity' ? 'categoria' : mode === 'software' ? 'software' : 'projeto';
   return (
     <div className="chart-container">
       <svg
-        viewBox={`0 0 ${width} ${height}`}
+        viewBox="0 0 760 204"
         role="img"
-        aria-label="Distribuição do tempo ativo, pausas e ausência no período"
+        aria-label={`Distribuição do tempo por ${grouping}, com pausas e ausência`}
       >
         {[0, 1, 2, 3].map((i) => (
           <g key={i}>
@@ -92,34 +71,47 @@ export function ActivityChart({ events, range }: { events: ClassifiedEvent[]; ra
             </text>
           </g>
         ))}
-        {bins.map((bin, i) => {
-          const x = 46 + i * step + (step - barWidth) / 2;
-          const activeHeight = (bin.active / max) * graphHeight;
-          const restHeight = (bin.rest / max) * graphHeight;
-          const showLabel = bins.length <= 18 || i % Math.ceil(bins.length / 12) === 0;
+        {bins.map((bin, index) => {
+          const x = 46 + index * step + (step - barWidth) / 2;
+          const height = (totals[index] / max) * graphHeight;
+          let offset = 0;
+          const clip = `${id}-bar-${index}`;
           return (
-            <g key={bin.start}>
-              <title>
-                {bin.label}: {formatDuration(bin.active)} ativos, {formatDuration(bin.rest)} em
-                pausa ou ausência
-              </title>
-              <rect
-                x={x}
-                y={12 + graphHeight - activeHeight}
-                width={barWidth}
-                height={activeHeight}
-                rx="4"
-                fill="#7f9477"
-              />
-              <rect
-                x={x}
-                y={12 + graphHeight - activeHeight - restHeight}
-                width={barWidth}
-                height={Math.max(0, restHeight - 2)}
-                rx="3"
-                fill="#e9dcc9"
-              />
-              {showLabel && (
+            <g key={bin.start} className="chart-bin">
+              <title>{`${bin.label}: ${bin.segments.map((segment) => `${segment.name}: ${formatDuration(segment.duration)}`).join('; ') || 'Sem registros'}`}</title>
+              <defs>
+                <clipPath id={clip}>
+                  <rect
+                    x={x}
+                    y={12 + graphHeight - height}
+                    width={barWidth}
+                    height={height}
+                    rx="3"
+                  />
+                </clipPath>
+              </defs>
+              <g clipPath={`url(#${clip})`}>
+                {bin.segments.map((segment) => {
+                  const segmentHeight = (segment.duration / max) * graphHeight;
+                  offset += segmentHeight;
+                  return (
+                    <rect
+                      key={segment.id}
+                      className="chart-segment"
+                      data-series-id={segment.id}
+                      data-duration={segment.duration}
+                      x={x}
+                      y={12 + graphHeight - offset}
+                      width={barWidth}
+                      height={segmentHeight}
+                      fill={segment.color}
+                    >
+                      <title>{`${bin.label} · ${segment.name}: ${formatDuration(segment.duration)}`}</title>
+                    </rect>
+                  );
+                })}
+              </g>
+              {(bins.length <= 18 || index % Math.ceil(bins.length / 12) === 0) && (
                 <text x={x + barWidth / 2} y="192" textAnchor="middle" className="chart-label">
                   {bin.label}
                 </text>
@@ -147,6 +139,7 @@ export function Dashboard({
   const idle = duration(events.filter((e) => e.kind === 'idle'));
   const uncategorized = duration(active.filter((e) => !e.activityId));
   const rows = groupEvents(events, config, mode);
+  const chartGroups = chartSeries(events, config, mode, rows);
   const softwareRows = groupEvents(events, config, 'software').slice(0, 4);
   const projectRows = groupEvents(events, config, 'project')
     .filter((r) => r.id !== 'p:none')
@@ -196,24 +189,23 @@ export function Dashboard({
                   ? 'O ritmo do período'
                   : 'O ritmo do seu dia'}
               </h2>
-              <p>Um olhar sobre como seu tempo se distribui.</p>
+              <p>As cores acompanham o agrupamento escolhido abaixo.</p>
             </div>
             <span className="subtle-icon">
               <Timer size={18} />
             </span>
           </div>
-          <ActivityChart events={events} range={range} />
+          <ActivityChart series={chartGroups} range={range} mode={mode} />
           <div className="chart-legend">
-            <span>
-              <i style={{ background: '#7f9477' }} />
-              Tempo ativo
-            </span>
-            <span>
-              <i style={{ background: '#e9dcc9' }} />
-              Pausa e ausência
-            </span>
+            {chartGroups.map((group) => (
+              <span key={group.id} data-series-id={group.id}>
+                <i style={{ background: group.color }} />
+                {group.name}
+              </span>
+            ))}
             <span className="legend-note">
-              <HelpCircle size={12} /> Intervalos sem coleta não entram no total
+              <HelpCircle size={12} /> Passe o mouse sobre uma faixa para ver o tempo. Intervalos
+              sem coleta não entram no total.
             </span>
           </div>
         </section>
@@ -392,7 +384,7 @@ function ActivityTree({
       const percent = (row.duration / Math.max(total, 1)) * 100;
       return (
         <div key={key}>
-          <div className={`activity-row ${depth ? 'child-row' : ''}`}>
+          <div className={`activity-row ${depth ? 'child-row' : ''}`} data-group-id={row.id}>
             <div className="activity-name" style={{ paddingLeft: `${depth * 25 + 16}px` }}>
               {row.children.length ? (
                 <button

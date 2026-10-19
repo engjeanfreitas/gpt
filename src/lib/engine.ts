@@ -8,6 +8,7 @@ import type {
   Rule,
   TimeEvent,
 } from './types';
+import { softwareColor } from './colors';
 
 const lower = (s: string) => s.normalize('NFKC').toLocaleLowerCase('pt-BR');
 export function matchesRule(event: TimeEvent, rule: Rule): boolean {
@@ -126,7 +127,8 @@ export function groupEvents(
   };
   for (const e of events.filter((e) => e.kind === 'active')) {
     const categories = categoryPath(e.categoryId, config.categories);
-    const color = categories.at(-1)?.color ?? '#9a9b91';
+    const color =
+      mode === 'software' ? softwareColor(e.app, config) : (categories.at(-1)?.color ?? '#475569');
     const ignored = [e.softwareName, e.app, e.app.replace(/\.exe$/i, '')].map(lower);
     const titleParts = e.title
       .split(/\s+[-–—|:>]\s+|\\/)
@@ -175,7 +177,7 @@ export function groupEvents(
           {
             id: `p:${e.projectId ?? 'none'}`,
             name: e.projectName,
-            color: project?.color ?? '#9a9b91',
+            color: project?.color ?? '#475569',
             subtitle: project?.client || 'Projeto',
           },
           { id: `a:${e.activityId ?? 'none'}`, name: e.activityName, color, subtitle: 'Atividade' },
