@@ -227,7 +227,7 @@ test('identifica AFK, distingue falha de coleta e permite configurar o limite', 
   await page.reload();
   await expect(page.locator('.capture-status')).toHaveText('AFK / ausente');
   await expect(page.locator('.table-footer b')).toHaveText('1 min');
-  await expect(page.locator('.metric').filter({ hasText: 'Pausas e AFK' })).toContainText('5 min');
+  await expect(page.locator('.metric').filter({ hasText: 'Tempo AFK' })).toContainText('5 min');
   await page.getByRole('button', { name: 'Linha do tempo', exact: true }).click();
   const idle = page.locator('.timeline-rest');
   await expect(idle).toContainText('AFK / ausente ou tela bloqueada');

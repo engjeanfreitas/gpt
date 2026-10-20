@@ -15,6 +15,7 @@ import {
 import { categoryPath, duration, formatDuration, matchesRule } from '../lib/engine';
 import { COLORS } from '../lib/defaults';
 import { Field, Modal, AppIcon } from './ui';
+import { CategoryBadge } from './CategoryBadge';
 import type { ClassifiedEvent, Configuration, Project, Rule } from '../lib/types';
 
 export function ProjectEditor({
@@ -404,6 +405,17 @@ export function RuleEditor({
             </Field>
           </div>
         )}
+        <div className="rule-category-preview">
+          <CategoryBadge
+            categoryId={
+              activityId === '__new'
+                ? categoryId || null
+                : (config.activities.find((a) => a.id === activityId)?.categoryId ?? null)
+            }
+            categories={config.categories}
+            emptyLabel={activityId ? 'Sem categoria' : 'Atividade definida por outras regras'}
+          />
+        </div>
         <div className="rule-preview">
           <span className="eyebrow">PRÉVIA NO HISTÓRICO DISPONÍVEL</span>
           <strong>

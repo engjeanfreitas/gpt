@@ -27,6 +27,7 @@ import {
 import { Dashboard, Timeline } from './components/Dashboard';
 import { EventEditor, PauseEditor, ProjectEditor, RuleEditor } from './components/Editors';
 import { Settings } from './components/Settings';
+import { CategoryBadge } from './components/CategoryBadge';
 import { AppIcon, Empty, Field, Modal, Toast } from './components/ui';
 import {
   categoryColor,
@@ -981,7 +982,7 @@ function Rules({
             <span />
           </div>
           {visibleRules.map((rule) => (
-            <div className="rule-row" key={rule.id}>
+            <div className="rule-row" key={rule.id} data-rule-id={rule.id}>
               <button className="rule-name" onClick={() => onEdit(rule)}>
                 <strong>{rule.name}</strong>
                 <small>
@@ -999,6 +1000,15 @@ function Rules({
                   {config.activities.find((a) => a.id === rule.activityId)?.name ||
                     'Manter atividade'}
                 </span>
+                <CategoryBadge
+                  categoryId={
+                    config.activities.find((a) => a.id === rule.activityId)?.categoryId ?? null
+                  }
+                  categories={config.categories}
+                  emptyLabel={
+                    rule.activityId ? 'Sem categoria' : 'Atividade definida por outras regras'
+                  }
+                />
                 {rule.projectId && (
                   <small>
                     <FolderKanban size={12} />

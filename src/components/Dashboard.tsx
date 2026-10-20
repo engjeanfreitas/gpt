@@ -7,6 +7,7 @@ import {
   Clock3,
   Coffee,
   FolderKanban,
+  Hourglass,
   Layers3,
   Monitor,
   MoreHorizontal,
@@ -14,9 +15,17 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import { AppIcon, Empty } from './ui';
-import { dayStart, duration, formatClock, formatDuration, groupEvents } from '../lib/engine';
+import {
+  categoryColor,
+  dayStart,
+  duration,
+  formatClock,
+  formatDuration,
+  groupEvents,
+} from '../lib/engine';
 import { buildTimeline } from '../lib/timeline';
 import { chartBins, chartSeries, type ChartSeries } from '../lib/chart';
+import { dashboardTotals } from '../lib/metrics';
 import type { ClassifiedEvent, Configuration, DateRange, GroupMode, GroupRow } from '../lib/types';
 
 interface Props {
@@ -133,11 +142,11 @@ export function Dashboard({
   onProject,
   onNewProject,
 }: Props) {
-  const active = events.filter((e) => e.kind === 'active');
-  const total = duration(active);
-  const paused = duration(events.filter((e) => e.kind === 'pause'));
-  const idle = duration(events.filter((e) => e.kind === 'idle'));
-  const uncategorized = duration(active.filter((e) => !e.activityId));
+  const totals = dashboardTotals(events, config);
+  const total = totals.active;
+  const multipleDays = dayStart(new Date(range.start)) !== dayStart(new Date(range.end - 1));
+  const share = (value: number) =>
+    `${total ? Math.round((value / total) * 100) : 0}% do tempo ativo`;
   const rows = groupEvents(events, config, mode);
   const chartGroups = chartSeries(events, config, mode, rows);
   const softwareRows = groupEvents(events, config, 'software').slice(0, 4);
@@ -148,36 +157,42 @@ export function Dashboard({
     <>
       <div className="metrics">
         <Metric
-          label="Tempo ativo"
-          value={formatDuration(total)}
+          label={multipleDays ? 'Tempo ativo no período' : 'Tempo ativo no dia'}
+          value={formatDuration(totals.active)}
           icon={<Clock3 size={18} />}
-          note="Nos softwares em primeiro plano"
-          tone="green"
-        />
-        <Metric
-          label="Em projetos"
-          value={formatDuration(duration(active.filter((e) => !!e.projectId)))}
-          icon={<FolderKanban size={18} />}
-          note={`${new Set(active.map((e) => e.projectId).filter(Boolean)).size} projetos no período`}
-          tone="orange"
-        />
-        <Metric
-          label="Pausas e AFK"
-          value={formatDuration(paused + idle)}
-          icon={<Coffee size={18} />}
-          note={`${formatDuration(paused)} de pausa · ${formatDuration(idle)} AFK / tela bloqueada`}
-          tone="purple"
-        />
-        <Metric
-          label="Sem classificação"
-          value={formatDuration(uncategorized)}
-          icon={<Layers3 size={18} />}
           note={
-            total
-              ? `${Math.round((uncategorized / total) * 100)}% do tempo ativo para organizar`
-              : 'Classifique suas primeiras atividades'
+            totals.unclassified
+              ? `${formatDuration(totals.unclassified)} sem atividade definida`
+              : 'Nos softwares em primeiro plano'
+          }
+          tone="blue"
+        />
+        <Metric
+          label="Tempo de trabalho"
+          value={formatDuration(totals.work)}
+          icon={<FolderKanban size={18} />}
+          note={`${share(totals.work)} · ${config.categories.find((c) => c.id === 'work')?.name ?? 'Trabalho'}`}
+          tone="green"
+          color={categoryColor('work', config.categories)}
+        />
+        <Metric
+          label="Tempo AFK"
+          value={formatDuration(totals.afk)}
+          icon={<Coffee size={18} />}
+          note={
+            totals.paused
+              ? `Ausência / tela bloqueada · pausa separada: ${formatDuration(totals.paused)}`
+              : 'Ausência automática / tela bloqueada'
           }
           tone="neutral"
+        />
+        <Metric
+          label="Tempo procrastinando"
+          value={formatDuration(totals.procrastination)}
+          icon={<Hourglass size={18} />}
+          note={`${share(totals.procrastination)} · ${config.categories.find((c) => c.id === 'personal')?.name ?? 'Pessoal'}`}
+          tone="purple"
+          color={categoryColor('personal', config.categories)}
         />
       </div>
       <div className="dashboard-grid">
@@ -340,18 +355,20 @@ function Metric({
   note,
   icon,
   tone,
+  color,
 }: {
   label: string;
   value: string;
   note: string;
   icon: React.ReactNode;
   tone: string;
+  color?: string;
 }) {
   return (
     <section className={`card metric metric-${tone}`}>
       <div className="metric-label">
         {label}
-        <span>{icon}</span>
+        <span style={color ? { color } : undefined}>{icon}</span>
       </div>
       <div className="metric-value">{value}</div>
       <p>{note}</p>

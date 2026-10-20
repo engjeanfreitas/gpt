@@ -685,13 +685,17 @@ h1 {
   background: #faf1e9;
   color: #c49065;
 }
+.metric-blue .metric-label > span {
+  background: #eff6ff;
+  color: #2563eb;
+}
 .metric-purple .metric-label > span {
   background: #f4f0f6;
   color: #b09aba;
 }
 .metric-neutral .metric-label > span {
-  background: #f3f3ed;
-  color: #a0a18a;
+  background: #f1f5f9;
+  color: #64748b;
 }
 .dashboard-grid {
   display: grid;
@@ -1497,10 +1501,28 @@ h1 {
   display: block;
   margin-top: 4px;
 }
-.rule-target span {
+.rule-target > span {
   display: block;
   font-size: 10px;
   color: #8da175;
+}
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #7e8974;
+}
+.category-badge .category-dot {
+  flex-shrink: 0;
+}
+.rule-target > .category-badge {
+  display: flex;
+  font-size: 9px;
+  margin-top: 5px;
+}
+.rule-category-preview {
+  margin: 0 0 16px;
 }
 .rule-target small {
   display: flex;
