@@ -1205,6 +1205,19 @@ h1 {
 .timeline-options input {
   accent-color: #758b60;
 }
+.timeline-block-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.timeline-block-heading .timeline-summary {
+  flex: 1;
+  min-width: 0;
+}
+.timeline-edit-block {
+  flex-shrink: 0;
+  font-size: 10px;
+}
 .timeline-details {
   padding: 0 12px 12px;
   border-radius: 8px;
@@ -2568,6 +2581,16 @@ h1 {
   }
   .timeline-list {
     padding: 8px 14px 20px;
+  }
+  .timeline-block-heading {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .timeline-block-heading .timeline-summary {
+    flex-basis: 100%;
+  }
+  .timeline-edit-block {
+    margin: 0 0 12px auto;
   }
   .timeline-item {
     gap: 9px;

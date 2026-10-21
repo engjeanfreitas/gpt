@@ -1,0 +1,34 @@
+**Tempo 0.1.5 — edição de blocos de tempo, novos indicadores e cores nas regras.**
+
+### Atribuir um projeto ao bloco inteiro
+
+Na **Linha do tempo**, clique em **Editar bloco** ao lado do resumo, escolha o **Projeto** e confirme em **Aplicar ao bloco**. A atribuição vale para todos os intervalos daquele bloco, inclusive consultas rápidas a outros softwares. Não é necessário abrir ou corrigir cada intervalo separadamente.
+
+O editor mostra os horários, a quantidade de intervalos e a duração total. Ao alterar apenas o projeto, atividades, categorias, durações e regras são preservadas. Registros fora do bloco e o projeto selecionado para a sessão atual também são mantidos. A edição individual continua disponível ao abrir os detalhes do resumo. Pausas e AFK ficam fora dos blocos ativos.
+
+As atribuições usam os registros originais completos. Quando um registro continua além do dia ou período exibido, o editor avisa que a alteração também alcança a parte não exibida desse mesmo registro.
+
+### Quatro destaques no dashboard
+
+- **Tempo ativo no dia:** tempo registrado em atividade, com indicação do que está sem atividade definida. Ao selecionar vários dias, o título passa a **Tempo ativo no período**.
+- **Tempo de trabalho:** soma das atividades da categoria principal Trabalho e suas subcategorias.
+- **Tempo AFK:** ausência automática e tela bloqueada. Pausas manuais são informadas separadamente.
+- **Tempo procrastinando:** soma das atividades classificadas na categoria principal Pessoal, incluindo redes sociais, jogos e navegação pessoal. Navegação sem classificação continua pendente; não é considerada procrastinação apenas por estar no navegador.
+
+Os valores respeitam o período e os filtros selecionados. Renomear as categorias mantém os vínculos por identificador; reclassificar uma atividade atualiza os indicadores sem alterar as durações registradas.
+
+### Cor da categoria nas regras
+
+Em **Regras e atividades**, a classificação de cada regra mostra um marcador com a mesma cor herdada da árvore de categorias. O editor também exibe a cor e o caminho da categoria ao escolher a atividade. Regras que mantêm a atividade definida por outras regras mostram essa indicação com um marcador neutro.
+
+### Como atualizar
+
+Se está na **0.1.3 ou 0.1.4**, abra **Preferências → Atualizações → Verificar atualizações**, escolha **Baixar e instalar** e confirme. O Tempo verifica a assinatura e salva um backup local antes da instalação. Histórico, configurações, projetos e o caminho do banco são preservados.
+
+Para instalar manualmente, encerre o Tempo pela bandeja e execute **Tempo-0.1.5-windows-x64-setup.exe** com o mesmo usuário e local da instalação anterior, sem desinstalar ou excluir dados. Para permanecer portátil, substitua os arquivos extraídos pelo ZIP com o aplicativo encerrado.
+
+### Validação
+
+Validado com 28 testes unitários da interface, 17 testes do núcleo Rust, 15 fluxos de navegador e compilação da interface. Os fluxos cobrem atribuição ao bloco inteiro, cancelamento, persistência, preservação dos demais campos, edição individual posterior, avisos de recorte, layout móvel, indicadores e cores das regras. A assinatura do instalador é conferida com a mesma chave pública das versões anteriores, incluindo rejeição de um arquivo alterado.
+
+O instalador é compilado para Windows a partir de Linux. A captura real, o áudio e a atualização completa com reinício ainda precisam de validação em um Windows real. A assinatura das atualizações é independente de Authenticode; esta distribuição de teste permanece sem certificado de reputação do Windows.

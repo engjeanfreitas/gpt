@@ -91,7 +91,10 @@ export default function App() {
   }, [localDay, period]);
   const [projectEditor, setProjectEditor] = useState<Project | 'new' | null>(null);
   const [ruleEditor, setRuleEditor] = useState<Rule | 'new' | null>(null);
-  const [selected, setSelected] = useState<ClassifiedEvent[] | null>(null);
+  const [selected, setSelected] = useState<{
+    events: ClassifiedEvent[];
+    wholeBlock: boolean;
+  } | null>(null);
   const [pauseEditor, setPauseEditor] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; error: boolean } | null>(null);
@@ -162,6 +165,13 @@ export default function App() {
     () => (snapshot ? classify(snapshot.events, snapshot.config) : []),
     [snapshot],
   );
+  const selectedIntervals = new Map(selected?.events.map((event) => [event.id, event]));
+  const hasClippedIntervals =
+    !!selected &&
+    all.some((original) => {
+      const event = selectedIntervals.get(original.id);
+      return event && (original.start < event.start || original.end > event.end);
+    });
   const events = useMemo(
     () =>
       clipEvents(all, range).filter((e) => {
@@ -605,7 +615,7 @@ export default function App() {
               range={range}
               mode={mode}
               onMode={setMode}
-              onSelect={setSelected}
+              onSelect={(events) => setSelected({ events, wholeBlock: false })}
               onNewProject={() => setProjectEditor('new')}
               onProject={(id) => {
                 setProjectFilter(id);
@@ -614,7 +624,13 @@ export default function App() {
               }}
             />
           )}
-          {page === 'timeline' && <Timeline events={events} onSelect={setSelected} />}
+          {page === 'timeline' && (
+            <Timeline
+              events={events}
+              onSelect={(events) => setSelected({ events, wholeBlock: false })}
+              onEditBlock={(events) => setSelected({ events, wholeBlock: true })}
+            />
+          )}
           {page === 'projects' && (
             <Projects
               config={config}
@@ -721,7 +737,9 @@ export default function App() {
       )}
       {selected && (
         <EventEditor
-          events={selected}
+          events={selected.events}
+          wholeBlock={selected.wholeBlock}
+          hasClippedIntervals={hasClippedIntervals}
           config={config}
           onClose={() => setSelected(null)}
           onSave={saveConfig}

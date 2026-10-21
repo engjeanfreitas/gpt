@@ -12,7 +12,7 @@ import {
   Save,
   Trash2,
 } from 'lucide-react';
-import { categoryPath, duration, formatDuration, matchesRule } from '../lib/engine';
+import { categoryPath, duration, formatClock, formatDuration, matchesRule } from '../lib/engine';
 import { COLORS } from '../lib/defaults';
 import { Field, Modal, AppIcon } from './ui';
 import { CategoryBadge } from './CategoryBadge';
@@ -459,12 +459,16 @@ export function RuleEditor({
 }
 export function EventEditor({
   events,
+  wholeBlock = false,
+  hasClippedIntervals = false,
   config,
   onSave,
   onRule,
   onClose,
 }: {
   events: ClassifiedEvent[];
+  wholeBlock?: boolean;
+  hasClippedIntervals?: boolean;
   config: Configuration;
   onSave: (config: Configuration) => Promise<void>;
   onRule: (rule: Rule) => void;
@@ -538,8 +542,8 @@ export function EventEditor({
   };
   return (
     <Modal
-      title="Organizar seu tempo"
-      subtitle={`${events.length} intervalos selecionados · ${formatDuration(duration(events))}`}
+      title={wholeBlock ? 'Editar bloco de tempo' : 'Organizar seu tempo'}
+      subtitle={`${wholeBlock ? `${formatClock(Math.min(...events.map((event) => event.start)))}–${formatClock(Math.max(...events.map((event) => event.end)))} · ` : ''}${events.length} intervalos selecionados · ${formatDuration(duration(events))}`}
       onClose={onClose}
       wide
     >
@@ -555,6 +559,20 @@ export function EventEditor({
             </p>
           </div>
         </div>
+        {wholeBlock && (
+          <p className="modal-note">
+            O projeto escolhido será aplicado a todos os intervalos deste bloco, incluindo as
+            mudanças rápidas de software. Para manter as atividades atuais, deixe o campo Atividade
+            sem alteração.
+          </p>
+        )}
+        {hasClippedIntervals && (
+          <p className="warning-line">
+            <AlertTriangle size={16} />
+            Há registros que continuam fora do período exibido. A alteração também será aplicada ao
+            restante desses registros originais.
+          </p>
+        )}
         <div className="form-two">
           <Field label="Projeto">
             <select
@@ -666,7 +684,11 @@ export function EventEditor({
           )}
         </div>
         <div className="inset-panel">
-          <span className="eyebrow">POR QUE ESTE REGISTRO FOI CLASSIFICADO?</span>
+          <span className="eyebrow">
+            {events.length > 1
+              ? 'REGRAS DO PRIMEIRO INTERVALO'
+              : 'POR QUE ESTE REGISTRO FOI CLASSIFICADO?'}
+          </span>
           {matched.length ? (
             matched.map((r) => (
               <p key={r.id} className="matched-rule">
@@ -713,7 +735,7 @@ export function EventEditor({
           </button>
           <button className="button button-primary" disabled={busy}>
             <Check size={15} />
-            {busy ? 'Salvando…' : 'Aplicar aos intervalos'}
+            {busy ? 'Salvando…' : wholeBlock ? 'Aplicar ao bloco' : 'Aplicar aos intervalos'}
           </button>
         </div>
       </form>

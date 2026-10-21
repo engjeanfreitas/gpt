@@ -2,13 +2,15 @@
 
 Rastreador pessoal de tempo para Windows. Organize o histórico em árvore e explore os mesmos intervalos por atividade, software ou projeto.
 
-**Download da versão de teste:** [Instalador Windows x64](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.4/Tempo-0.1.4-windows-x64-setup.exe) · [ZIP portátil](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.4/Tempo-0.1.4-windows-x64-portable.zip) · [Página da versão](https://github.com/engjeanfreitas/gpt/releases/tag/v0.1.4).
+**Download da versão de teste:** [Instalador Windows x64](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.5/Tempo-0.1.5-windows-x64-setup.exe) · [ZIP portátil](https://github.com/engjeanfreitas/gpt/releases/download/v0.1.5/Tempo-0.1.5-windows-x64-portable.zip) · [Página da versão](https://github.com/engjeanfreitas/gpt/releases/tag/v0.1.5).
 
-Esta distribuição não tem assinatura de código e ainda requer os testes de captura e áudio em um Windows real. As [notas da versão](docs/RELEASE-NOTES-v0.1.4.md) descrevem recursos e limites.
+Esta distribuição não tem assinatura de código e ainda requer os testes de captura e áudio em um Windows real. As [notas da versão](docs/RELEASE-NOTES-v0.1.5.md) descrevem recursos e limites.
 
 Esta versão inclui dashboard com barras verticais empilhadas nas mesmas cores da árvore e do agrupamento selecionado, timeline, projetos com estimativa de horas, regras reprocessáveis, atribuições manuais, nomes amigáveis, categorias hierárquicas, exportação CSV e pausa configurável com contador, notificação e alarme.
 
 A versão 0.1.4 acrescenta 114 regras padrão para atividades comuns, inspiradas no ActivityWatch, com busca e edição. Trabalho começa em verde, e atividades e subcategorias herdam a cor da categoria principal na árvore e no gráfico por atividade. Consulte o [catálogo de regras padrão](docs/REGRAS-PADRAO.md).
+
+A versão 0.1.5 destaca tempo ativo, trabalho, AFK e procrastinação no dashboard. As regras mostram a cor da categoria na lista e no editor. Na linha do tempo, **Editar bloco** permite atribuir um projeto a todos os intervalos do bloco de uma vez, preservando as atividades e durações.
 
 ![Dashboard com dados de demonstração](docs/dashboard.png)
 
@@ -48,7 +50,11 @@ O workflow `.github/workflows/checks.yml` executa testes e build no Windows a ca
 
 Trocas de tela com menos de cinco minutos ficam nos detalhes de um bloco. Uma mudança de cinco minutos ou mais inicia outro bloco; retornar à mesma janela após consultas curtas mantém o bloco anterior. Pausas, ausência, lacunas entre registros e dias diferentes delimitam os blocos. Sequências só com trocas curtas aparecem como **Mudanças rápidas**.
 
-Por exemplo, Eberick por 30 min → navegador por 2 min → Eberick por 20 min forma um bloco de 52 min, mas o dashboard continua atribuindo 50 min ao Eberick e 2 min ao navegador, em suas próprias categorias e projetos. O agrupamento é apenas visual: não modifica a coleta, o banco ou os totais. Abra o bloco para editar um intervalo específico ou marque **Mostrar todos os intervalos**. A atribuição atua no registro original completo, inclusive quando a visualização o recorta no limite do dia ou do período selecionado.
+Por exemplo, Eberick por 30 min → navegador por 2 min → Eberick por 20 min forma um bloco de 52 min, mas o dashboard continua atribuindo 50 min ao Eberick e 2 min ao navegador, em suas próprias categorias e projetos. O agrupamento é apenas visual: não modifica a coleta, o banco ou os totais.
+
+Use **Editar bloco** ao lado do resumo para atribuir um projeto a todos os intervalos daquele bloco de uma vez, incluindo as consultas rápidas em outros softwares. O editor mostra horário, quantidade de intervalos e duração total. Altere o projeto e clique em **Aplicar ao bloco**; as atividades e categorias são mantidas se você não alterar esses campos. Abra o resumo para editar somente um intervalo ou marque **Mostrar todos os intervalos**. Pausas e AFK ficam fora dos blocos ativos.
+
+A atribuição atua no registro original completo. Quando a visualização o recorta no limite do dia ou do período selecionado, o editor avisa que a alteração também vale para a parte não exibida desse mesmo registro.
 
 ### Atribuir um projeto
 
@@ -93,7 +99,7 @@ O botão de exclusão apaga o período selecionado, independentemente dos filtro
 
 ## Atualizar o aplicativo
 
-Encerre o Tempo pela bandeja e execute o instalador da nova versão, com o mesmo usuário e local de instalação. Não é preciso desinstalar manualmente; histórico e configurações ficam no diretório de dados separado. A versão 0.1.4 mantém o mesmo formato do banco. Se optar por desinstalar, não marque a exclusão dos dados do aplicativo. A distribuição portátil é atualizada substituindo os arquivos extraídos com o programa encerrado.
+Encerre o Tempo pela bandeja e execute o instalador da nova versão, com o mesmo usuário e local de instalação. Não é preciso desinstalar manualmente; histórico e configurações ficam no diretório de dados separado. A versão 0.1.5 mantém o mesmo formato do banco. Se optar por desinstalar, não marque a exclusão dos dados do aplicativo. A distribuição portátil é atualizada substituindo os arquivos extraídos com o programa encerrado.
 
 A partir da 0.1.3, abra **Preferências → Atualizações → Verificar atualizações**. Quando houver uma nova versão assinada, escolha **Baixar e instalar**, confirme e acompanhe o progresso. O Tempo valida a assinatura, salva um backup, abre o instalador e é reaberto ao concluir. A consulta só ocorre ao clicar; não há download periódico em segundo plano. Versões anteriores precisam de uma atualização manual inicial para adicionar o botão. Consulte o [guia de atualizações](docs/ATUALIZACOES.md).
 

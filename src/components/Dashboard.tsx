@@ -11,6 +11,7 @@ import {
   Layers3,
   Monitor,
   MoreHorizontal,
+  Pencil,
   Timer,
   HelpCircle,
 } from 'lucide-react';
@@ -460,9 +461,11 @@ function ActivityTree({
 export function Timeline({
   events,
   onSelect,
+  onEditBlock,
 }: {
   events: ClassifiedEvent[];
   onSelect: (events: ClassifiedEvent[]) => void;
+  onEditBlock: (events: ClassifiedEvent[]) => void;
 }) {
   const [showAll, setShowAll] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
@@ -525,7 +528,9 @@ export function Timeline({
           <input type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.target.checked)} />
           Mostrar todos os intervalos
         </label>
-        <span>Abra um bloco para consultar e editar cada intervalo.</span>
+        <span>
+          Use Editar bloco para alterar todos os intervalos ou abra os detalhes para editar um.
+        </span>
       </div>
       {!blocks.length ? (
         <Empty
@@ -556,51 +561,61 @@ export function Timeline({
                   renderInterval(block.events[0])
                 ) : (
                   <>
-                    <button
-                      className="timeline-item timeline-summary"
-                      aria-expanded={open}
-                      onClick={() =>
-                        setExpanded((current) => {
-                          const next = new Set(current);
-                          if (next.has(block.id)) next.delete(block.id);
-                          else next.add(block.id);
-                          return next;
-                        })
-                      }
-                    >
-                      <span className="timeline-hours">
-                        {formatClock(block.start)}
-                        <small>{formatClock(block.end)}</small>
-                      </span>
-                      <span className="timeline-connector">
-                        <i />
-                      </span>
-                      {block.anchor ? (
-                        <AppIcon app={block.anchor.app} />
-                      ) : (
-                        <span className="rest-icon">
-                          <Layers3 size={18} />
+                    <div className="timeline-block-heading">
+                      <button
+                        className="timeline-item timeline-summary"
+                        aria-expanded={open}
+                        onClick={() =>
+                          setExpanded((current) => {
+                            const next = new Set(current);
+                            if (next.has(block.id)) next.delete(block.id);
+                            else next.add(block.id);
+                            return next;
+                          })
+                        }
+                      >
+                        <span className="timeline-hours">
+                          {formatClock(block.start)}
+                          <small>{formatClock(block.end)}</small>
                         </span>
-                      )}
-                      <span className="timeline-content">
-                        <strong>
-                          {block.anchor
-                            ? `${block.anchor.activityName} e mudanças rápidas`
-                            : 'Mudanças rápidas'}
+                        <span className="timeline-connector">
+                          <i />
+                        </span>
+                        {block.anchor ? (
+                          <AppIcon app={block.anchor.app} />
+                        ) : (
+                          <span className="rest-icon">
+                            <Layers3 size={18} />
+                          </span>
+                        )}
+                        <span className="timeline-content">
+                          <strong>
+                            {block.anchor
+                              ? `${block.anchor.activityName} e mudanças rápidas`
+                              : 'Mudanças rápidas'}
+                          </strong>
+                          <small>
+                            {block.events.length} intervalos · total do bloco ·{' '}
+                            {open ? 'fechar detalhes' : 'abrir detalhes'}
+                          </small>
+                        </span>
+                        <span className="project-pill">
+                          {projectNames.size > 1 ? 'Vários projetos' : block.events[0].projectName}
+                        </span>
+                        <strong className="timeline-duration">
+                          {formatDuration(duration(block.events))}
                         </strong>
-                        <small>
-                          {block.events.length} intervalos · total do bloco ·{' '}
-                          {open ? 'fechar detalhes' : 'abrir detalhes'}
-                        </small>
-                      </span>
-                      <span className="project-pill">
-                        {projectNames.size > 1 ? 'Vários projetos' : block.events[0].projectName}
-                      </span>
-                      <strong className="timeline-duration">
-                        {formatDuration(duration(block.events))}
-                      </strong>
-                      {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                    </button>
+                        {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                      </button>
+                      <button
+                        className="button button-secondary timeline-edit-block"
+                        title={`Editar todos os ${block.events.length} intervalos de ${formatClock(block.start)} a ${formatClock(block.end)}`}
+                        onClick={() => onEditBlock(block.events)}
+                      >
+                        <Pencil size={14} />
+                        Editar bloco
+                      </button>
+                    </div>
                     {open && (
                       <div className="timeline-details">
                         <p>
